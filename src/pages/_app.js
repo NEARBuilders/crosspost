@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import '@/styles/globals.css';
-import { Navigation } from '@/components/navigation';
+import { Navigation } from "../components/navigation";
+import "../styles/globals.css";
 
-import { Wallet, NearContext } from '@/wallets/near';
-import { NetworkId } from '@/config';
+import { NetworkId } from "../config";
+import { NearContext, Wallet } from "../wallets/near";
 
 const wallet = new Wallet({ networkId: NetworkId });
 
-export default function MyApp({ Component, pageProps }) {
-  const [signedAccountId, setSignedAccountId] = useState('');
+export default function App({ Component, pageProps }) {
+  const [signedAccountId, setSignedAccountId] = useState("");
 
-  useEffect(() => { wallet.startUp(setSignedAccountId) }, []);
+  useEffect(() => {
+    // Start up NEAR wallet
+    wallet.startUp(setSignedAccountId);
+  }, []); // Empty deps since checkXConnection is memoized
 
   return (
     <NearContext.Provider value={{ wallet, signedAccountId }}>
-      <Navigation />
       <Component {...pageProps} />
     </NearContext.Provider>
   );

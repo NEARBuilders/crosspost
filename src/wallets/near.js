@@ -14,10 +14,6 @@ import { setupMeteorWallet } from '@near-wallet-selector/meteor-wallet';
 import { setupSender } from '@near-wallet-selector/sender';
 import { setupBitteWallet } from '@near-wallet-selector/bitte-wallet';
 
-// ethereum wallets
-import { wagmiConfig, web3Modal } from '@/wallets/web3modal';
-import { setupEthereumWallets } from "@near-wallet-selector/ethereum-wallets";
-
 const THIRTY_TGAS = '30000000000000';
 const NO_DEPOSIT = '0';
 
@@ -51,7 +47,6 @@ export class Wallet {
         setupMeteorWallet(),
         setupSender(),
         setupBitteWallet(),
-        setupEthereumWallets({ wagmiConfig, web3Modal, alwaysOnboardDuringSignIn: true }),
       ],
     });
 

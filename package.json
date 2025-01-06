@@ -13,7 +13,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "bunx playwright test",
-    "test:ui": "bunx playwright test --ui",
+    "test:ui": "bunx playwright test --ui"
   },
   "browserslist": {
     "production": [
@@ -38,17 +38,22 @@
     "@near-wallet-selector/modal-ui": "^8.9.13",
     "@near-wallet-selector/my-near-wallet": "^8.9.13",
     "@near-wallet-selector/sender": "^8.9.13",
+    "cookie": "^1.0.2",
+    "crosspost": ".",
+    "lucide-react": "^0.469.0",
     "near-api-js": "^4.0.3",
     "next": "14.2.13",
+    "next-auth": "^4.24.11",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "wagmi": "^2.12.16"
   },
   "devDependencies": {
-    "@playwright/test": "^1.46.1",
-    "prettier": "^3.3.3",
     "encoding": "^0.1.13",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
-    "pino-pretty": "^11.2.2"
+    "pino-pretty": "^11.2.2",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
   }
 }
