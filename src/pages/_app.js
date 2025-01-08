@@ -20,25 +20,46 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         <title>crosspost | your content, everywhere</title>
-        <meta name="description" content="Open source user interface to crosspost across Twitter (X) and Near Social platforms." />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta
+          name="description"
+          content="Open source user interface to crosspost across Twitter (X) and Near Social platforms."
+        />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
         <meta charSet="utf-8" />
         <meta name="language" content="English" />
-        
+
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://crosspost.everything.dev" />
-        <meta property="og:title" content="crosspost | your content, everywhere" />
-        <meta property="og:description" content="Open source user interface to crosspost across Twitter (X) and Near Social platforms." />
+        <meta
+          property="og:title"
+          content="crosspost | your content, everywhere"
+        />
+        <meta
+          property="og:description"
+          content="Open source user interface to crosspost across Twitter (X) and Near Social platforms."
+        />
         <meta property="og:image" content="/og-image.svg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://crosspost.everything.dev" />
-        <meta property="twitter:title" content="crosspost | your content, everywhere" />
-        <meta property="twitter:description" content="Open source user interface to crosspost across Twitter (X) and Near Social platforms." />
+        <meta
+          property="twitter:url"
+          content="https://crosspost.everything.dev"
+        />
+        <meta
+          property="twitter:title"
+          content="crosspost | your content, everywhere"
+        />
+        <meta
+          property="twitter:description"
+          content="Open source user interface to crosspost across Twitter (X) and Near Social platforms."
+        />
         <meta property="twitter:image" content="/og-image.svg" />
 
         {/* Favicon */}

@@ -2,9 +2,7 @@ import { ConnectToNearButton } from "@/components/connext-to-near";
 import { PenSquare } from "lucide-react";
 import { useContext } from "react";
 import { ComposePost, PostForm } from "../components/compose-post";
-import {
-  ConnectToTwitterButton
-} from "../components/connect-to-twitter";
+import { ConnectToTwitterButton } from "../components/connect-to-twitter";
 import { NearContext } from "../wallets/near";
 import { useTwitterConnection } from "@/store/twitter-store";
 
@@ -17,7 +15,6 @@ export default function Home() {
     <div className="min-h-screen p-8 relative bg-gray-100">
       <div className="blob"></div>
       <div className="mx-auto min-h-[790px] max-w-4xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]">
-
         {/* TOP BAR ( WINDOW CONTAINER ) */}
         <header className="border-b-2 border-gray-800 p-6">
           <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">

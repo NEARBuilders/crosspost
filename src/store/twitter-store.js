@@ -1,5 +1,10 @@
-import { create } from 'zustand';
-import { connectTwitter, disconnectTwitter, status, tweet } from "../lib/twitter";
+import { create } from "zustand";
+import {
+  connectTwitter,
+  disconnectTwitter,
+  status,
+  tweet,
+} from "../lib/twitter";
 
 const store = (set, get) => ({
   isConnected: false,
@@ -17,15 +22,15 @@ const store = (set, get) => ({
       set({ isConnecting: true, error: null });
       await connectTwitter();
     } catch (err) {
-      set({ isConnecting: false, error: 'Failed to connect to X' });
-      console.error('X connection error:', err);
+      set({ isConnecting: false, error: "Failed to connect to X" });
+      console.error("X connection error:", err);
     }
   },
   disconnect: async () => {
     await disconnectTwitter();
     set({ isConnected: false, isConnecting: false, handle: null, error: null });
     await get().checkConnection();
-  }
+  },
 });
 
 export const useTwitterStore = create(store);
@@ -45,6 +50,6 @@ export const useTwitterConnection = () => {
     handle,
     connect,
     disconnect,
-    checkConnection
+    checkConnection,
   };
 };

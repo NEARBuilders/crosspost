@@ -40,7 +40,8 @@ export class NearSocialService {
             },
           },
         },
-        account: { // this is used to validate that the user has permission to post ( will otherwise be blocked by contract )
+        account: {
+          // this is used to validate that the user has permission to post ( will otherwise be blocked by contract )
           publicKey: publicKey,
           accountID: accountId,
         },
@@ -48,7 +49,7 @@ export class NearSocialService {
 
       const transformedActions = transformActions(transaction.actions);
 
-      return { 
+      return {
         contractId: SOCIAL_CONTRACT[NETWORK_ID],
         actions: transformedActions,
       };

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { NearSocialService } from '../services/near-social';
+import { create } from "zustand";
+import { NearSocialService } from "../services/near-social";
 
 const store = (set, get) => ({
   wallet: null,
@@ -13,33 +13,36 @@ const store = (set, get) => ({
   post: async (content) => {
     const { service } = get();
     if (!service) {
-      throw new Error('Near Social service not initialized');
+      throw new Error("Near Social service not initialized");
     }
-    
+
     try {
       const transaction = await service.post({
-        type: 'md',
-        text: content
+        type: "md",
+        text: content,
       });
-      
+
       if (!transaction) {
-        throw new Error('Failed to create post transaction');
+        throw new Error("Failed to create post transaction");
       }
 
-      await get().wallet.signAndSendTransactions({ // we're in application state
-      // plugin is using it as middleware for signing transactions
-        transactions: [{
-          receiverId: transaction.contractId,
-          actions: transaction.actions
-        }]
+      await get().wallet.signAndSendTransactions({
+        // we're in application state
+        // plugin is using it as middleware for signing transactions
+        transactions: [
+          {
+            receiverId: transaction.contractId,
+            actions: transaction.actions,
+          },
+        ],
       });
 
       return true;
     } catch (error) {
-      console.error('Near Social post error:', error);
+      console.error("Near Social post error:", error);
       throw error;
     }
-  }
+  },
 });
 
 export const useNearSocialStore = create(store);

@@ -1,4 +1,4 @@
-export function XIcon({ size = 18, className = '' }) {
+export function XIcon({ size = 18, className = "" }) {
   return (
     <svg
       width={size}
