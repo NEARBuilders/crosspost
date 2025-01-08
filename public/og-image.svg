@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0F172A"/>
+  
+  <!-- Background Grid Pattern -->
+  <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <rect width="40" height="40" fill="none" stroke="#1E293B" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.3"/>
+  
+  <!-- Main Title -->
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">
+    crosspost
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="32" fill="#94A3B8" text-anchor="middle">
+    your content, everywhere
+  </text>
+  
+  <!-- Platform Icons and Connection Lines -->
+  <g transform="translate(400, 380)">
+    <!-- Twitter/X Icon -->
+    <circle cx="0" cy="0" r="50" fill="#1DA1F2"/>
+    <path d="M-25,-25 L25,25 M-25,25 L25,-25" stroke="white" stroke-width="8"/>
+    
+    <!-- Connection Line -->
+    <line x1="60" y1="0" x2="340" y2="0" stroke="#4F46E5" stroke-width="4" stroke-dasharray="10,10"/>
+    
+    <!-- NEAR Icon -->
+    <circle cx="400" cy="0" r="50" fill="#4F46E5"/>
+    <text x="400" y="15" font-family="Arial, sans-serif" font-size="32" fill="white" text-anchor="middle">N</text>
+  </g>
+</svg>

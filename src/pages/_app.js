@@ -30,14 +30,16 @@ export default function App({ Component, pageProps }) {
         <meta property="og:url" content="https://crosspost.everything.dev" />
         <meta property="og:title" content="crosspost | your content, everywhere" />
         <meta property="og:description" content="Open source user interface to crosspost across Twitter (X) and Near Social platforms." />
-        <meta property="og:image" content="/near-logo.svg" />
+        <meta property="og:image" content="/og-image.svg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://crosspost.everything.dev" />
         <meta property="twitter:title" content="crosspost | your content, everywhere" />
         <meta property="twitter:description" content="Open source user interface to crosspost across Twitter (X) and Near Social platforms." />
-        <meta property="twitter:image" content="/near-logo.svg" />
+        <meta property="twitter:image" content="/og-image.svg" />
 
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
