@@ -16,3 +16,6 @@ const evmWalletChains = {
 
 export const NETWORK_ID = "mainnet";
 export const EVMWalletChain = evmWalletChains[NETWORK_ID];
+
+export const NEAR_SOCIAL_ENABLED = true;
+export const TWITTER_ENABLED = true;

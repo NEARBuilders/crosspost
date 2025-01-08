@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+// This "widget" handles all of the editing for post content
+// Calls "onSubmit" on "Post"
+
 export function ComposePost({ onSubmit }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");

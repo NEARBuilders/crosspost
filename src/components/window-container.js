@@ -1,24 +1,21 @@
-import { useNearSocialStore } from "@/store/near-social-store";
 import { useTwitterConnection } from "@/store/twitter-store";
 import { NearContext } from "@/wallets/near";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { PenSquare } from "lucide-react";
-import { useRouter } from "next/router";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ConnectToNearButton } from "./connect-to-near";
 import { ConnectToTwitterButton } from "./connect-to-twitter";
 
 export const WindowControls = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const { accountId, signOut } = useNearSocialStore();
+  // const [isOpen, setIsOpen] = useState(false);
+  // const router = useRouter();
+  // const { accountId, signOut } = useNearSocialStore();
   const { signedAccountId } = useContext(NearContext);
   const { isConnected, handle } = useTwitterConnection();
 
-  const menuItems = [
-    { label: "Home", path: "/" },
-    { label: "Compose", path: "/compose" },
-  ];
+  // const menuItems = [
+  //   { label: "Home", path: "/" },
+  // ];
 
   return (
     <div className="relative border-b-2 border-gray-800 p-6">
