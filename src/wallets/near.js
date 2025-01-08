@@ -9,10 +9,7 @@ import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupWalletSelector } from '@near-wallet-selector/core';
 import { setupHereWallet } from '@near-wallet-selector/here-wallet';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
-import { setupLedger } from '@near-wallet-selector/ledger';
 import { setupMeteorWallet } from '@near-wallet-selector/meteor-wallet';
-import { setupSender } from '@near-wallet-selector/sender';
-import { setupBitteWallet } from '@near-wallet-selector/bitte-wallet';
 
 const THIRTY_TGAS = '30000000000000';
 const NO_DEPOSIT = '0';
@@ -43,10 +40,7 @@ export class Wallet {
       modules: [
         setupMyNearWallet(),
         setupHereWallet(),
-        setupLedger(),
         setupMeteorWallet(),
-        setupSender(),
-        setupBitteWallet(),
       ],
     });
 
@@ -200,6 +194,35 @@ export class Wallet {
       finality: 'final',
     });
     return keys.keys;
+  };
+
+  /**
+   * Gets the current account information
+   * @returns {Promise<{accountId: string, publicKey: string}>} - the account information
+   */
+  getAccount = async () => {
+    const walletSelector = await this.selector;
+    const accounts = walletSelector.store.getState().accounts;
+    const accountId = accounts.find(account => account.active)?.accountId;
+    
+    if (!accountId) {
+      throw new Error('No active account found');
+    }
+
+    const keys = await this.getAccessKeys(accountId);
+
+    console.log("keys", keys);
+    
+    const publicKey = keys[0]?.public_key;
+
+    if (!publicKey) {
+      throw new Error('No public key found for account');
+    }
+
+    return {
+      accountId,
+      publicKey
+    };
   };
 }
 

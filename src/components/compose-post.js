@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useXStore } from '../store/xStore';
+import { useNearSocialPost } from '../store/near-social-store';
 
 export function PostForm() {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
-  const post = useXStore((state) => state.post);
+  const postToTwitter = useXStore((state) => state.post);
+  const { post: postToNearSocial } = useNearSocialPost();
 
   const handleSubmit = async () => {
     if (!text.trim()) {
@@ -14,7 +16,8 @@ export function PostForm() {
 
     try {
       setError('');
-      await post(text);
+      // await postToTwitter(text);
+      await postToNearSocial(text);
       setText('');
     } catch (err) {
       setError('Failed to send post');

@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { Navigation } from "../components/navigation";
 import "../styles/globals.css";
 
-import { NetworkId } from "../config";
+import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
 
-const wallet = new Wallet({ networkId: NetworkId });
+const wallet = new Wallet({ networkId: NETWORK_ID });
 
 export default function App({ Component, pageProps }) {
   const [signedAccountId, setSignedAccountId] = useState("");

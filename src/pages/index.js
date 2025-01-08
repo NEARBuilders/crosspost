@@ -1,13 +1,21 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { NearContext } from '../wallets/near';
 import { useXStore } from '../store/xStore';
+import { useNearSocialStore } from '../store/near-social-store';
 import { PenSquare, Wallet } from 'lucide-react';
-import { XButton } from '../components/XButton';
-import { PostForm } from '../components/PostForm';
+import { XButton } from '../components/connect-to-twitter';
+import { PostForm } from '../components/compose-post';
 
 export default function Home() {
   const { wallet, signedAccountId } = useContext(NearContext);
   const isConnected = useXStore((state) => state.isConnected);
+  const setWallet = useNearSocialStore((state) => state.setWallet);
+
+  useEffect(() => {
+    if (wallet && signedAccountId) {
+      setWallet(wallet);
+    }
+  }, [wallet, signedAccountId, setWallet]);
 
   const handleSignIn = () => {
     wallet?.signIn();
