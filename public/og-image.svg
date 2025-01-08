@@ -17,18 +17,4 @@
   <text x="600" y="280" font-family="Arial, sans-serif" font-size="32" fill="#94A3B8" text-anchor="middle">
     your content, everywhere
   </text>
-  
-  <!-- Platform Icons and Connection Lines -->
-  <g transform="translate(400, 380)">
-    <!-- Twitter/X Icon -->
-    <circle cx="0" cy="0" r="50" fill="#1DA1F2"/>
-    <path d="M-25,-25 L25,25 M-25,25 L25,-25" stroke="white" stroke-width="8"/>
-    
-    <!-- Connection Line -->
-    <line x1="60" y1="0" x2="340" y2="0" stroke="#4F46E5" stroke-width="4" stroke-dasharray="10,10"/>
-    
-    <!-- NEAR Icon -->
-    <circle cx="400" cy="0" r="50" fill="#4F46E5"/>
-    <text x="400" y="15" font-family="Arial, sans-serif" font-size="32" fill="white" text-anchor="middle">N</text>
-  </g>
 </svg>

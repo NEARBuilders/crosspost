@@ -63,7 +63,7 @@ export default function App({ Component, pageProps }) {
         <meta property="twitter:image" content="/og-image.svg" />
 
         {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/black.svg" />
         <link rel="apple-touch-icon" href="/near-logo.svg" />
       </Head>
       <NearContext.Provider value={{ wallet, signedAccountId }}>
