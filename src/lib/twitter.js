@@ -1,7 +1,7 @@
 // SDK to communicate with the API
 // API uses the service
 
-export function getXTokens() {
+export function getTwitterTokens() {
   const cookies = document.cookie.split(";").reduce((acc, cookie) => {
     const [key, value] = cookie.trim().split("=");
     acc[key] = value;
@@ -21,7 +21,7 @@ export async function connectTwitter() {
 
   const data = await response.json();
   if (!data.authUrl) {
-    throw new Error("Failed to get X auth URL");
+    throw new Error("Failed to get Twitter Auth URL");
   }
 
   window.location.href = data.authUrl;

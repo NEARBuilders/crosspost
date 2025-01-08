@@ -22,8 +22,8 @@ const store = (set, get) => ({
       set({ isConnecting: true, error: null });
       await connectTwitter();
     } catch (err) {
-      set({ isConnecting: false, error: "Failed to connect to X" });
-      console.error("X connection error:", err);
+      set({ isConnecting: false, error: "Failed to connect to Twitter" });
+      console.error("Twitter connection error:", err);
     }
   },
   disconnect: async () => {
