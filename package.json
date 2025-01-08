@@ -46,9 +46,11 @@
     "next-auth": "^4.24.11",
     "react": "^18",
     "react-dom": "^18",
+    "twitter-api-v2": "^1.19.0",
     "wagmi": "^2.12.16"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.20",
     "encoding": "^0.1.13",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
