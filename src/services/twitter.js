@@ -5,7 +5,6 @@ import { TwitterApi } from "twitter-api-v2";
 
 export class TwitterService {
   constructor(clientId, clientSecret, apiKey, apiSecret) {
-    super();
     if (!clientId || !clientSecret || !apiKey || !apiSecret) {
       throw new Error("Twitter API credentials are required");
     }

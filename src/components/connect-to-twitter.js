@@ -2,12 +2,12 @@ import { useCallback, useEffect } from 'react';
 import { useTwitterConnection } from '../store/twitter-store';
 import { XIcon } from './icons/XIcon';
 
-export function ConnectToTwitter() {
+export function ConnectToTwitterButton() {
   const { isConnected, isConnecting, connect, disconnect, checkConnection } = useTwitterConnection();
   
   useEffect(() => {
     checkConnection();
-  }, []); // Check connection on mount
+  }, []); // Check connection when button loads
 
   const handleClick = useCallback(() => {
     if (isConnected) {

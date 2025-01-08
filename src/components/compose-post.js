@@ -9,10 +9,11 @@ export function ComposePost({ onSubmit }) {
       setError("Please enter your post text");
       return;
     }
-
     try {
       setError("");
-      onSubmit();
+
+      onSubmit(text); // any preprocessing?
+
       setText("");
     } catch (err) {
       setError("Failed to send post");

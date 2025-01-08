@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }) {
   useEffect(() => {
     // Start up NEAR wallet
     wallet.startUp(setSignedAccountId);
-  }, []); // Empty deps since checkXConnection is memoized
+  }, []);
 
   return (
     <NearContext.Provider value={{ wallet, signedAccountId }}>

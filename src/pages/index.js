@@ -1,34 +1,24 @@
-import { useContext, useEffect } from 'react';
-import { NearContext } from '../wallets/near';
-import { useXStore } from '../store/twitter-store';
-import { useNearSocialStore } from '../store/near-social-store';
-import { PenSquare, Wallet } from 'lucide-react';
-import { XButton } from '../components/connect-to-twitter';
-import { PostForm } from '../components/compose-post';
+import { ConnectToNearButton } from "@/components/connext-to-near";
+import { PenSquare } from "lucide-react";
+import { useContext } from "react";
+import { ComposePost, PostForm } from "../components/compose-post";
+import {
+  ConnectToTwitterButton
+} from "../components/connect-to-twitter";
+import { NearContext } from "../wallets/near";
+import { useTwitterConnection } from "@/store/twitter-store";
 
 export default function Home() {
-  const { wallet, signedAccountId } = useContext(NearContext);
-  const isConnected = useXStore((state) => state.isConnected);
-  const setWallet = useNearSocialStore((state) => state.setWallet);
+  const { signedAccountId } = useContext(NearContext);
 
-  useEffect(() => {
-    if (wallet && signedAccountId) {
-      setWallet(wallet);
-    }
-  }, [wallet, signedAccountId, setWallet]);
-
-  const handleSignIn = () => {
-    wallet?.signIn();
-  };
-
-  const handleSignOut = () => {
-    wallet?.signOut();
-  };
+  const { isConnected } = useTwitterConnection();
 
   return (
     <div className="min-h-screen p-8 relative bg-gray-100">
       <div className="blob"></div>
       <div className="mx-auto min-h-[790px] max-w-4xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]">
+
+        {/* TOP BAR ( WINDOW CONTAINER ) */}
         <header className="border-b-2 border-gray-800 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -36,14 +26,8 @@ export default function Home() {
               <h1 className="text-2xl font-bold">crosspost.near</h1>
             </div>
             <div className="flex items-center gap-4">
-              <button
-                onClick={signedAccountId ? handleSignOut : handleSignIn}
-                className="flex items-center gap-2 px-4 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
-              >
-                <Wallet size={18} />
-                {signedAccountId ? 'Disconnect NEAR' : 'Connect NEAR'}
-              </button>
-              {signedAccountId && <XButton />}
+              <ConnectToNearButton />
+              {signedAccountId && <ConnectToTwitterButton />}
             </div>
           </div>
           {signedAccountId && (
@@ -54,6 +38,8 @@ export default function Home() {
         </header>
 
         <main className="p-6">
+          {/* MAIN CONTENT */}
+
           {!signedAccountId ? (
             <div className="text-center py-12">
               <p className="text-lg text-gray-600">
@@ -67,7 +53,7 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <PostForm />
+            <ComposePost />
           )}
         </main>
       </div>

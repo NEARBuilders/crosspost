@@ -16,7 +16,6 @@ const NearSocialClient = new Social({
 
 export class NearSocialService {
   constructor(wallet) {
-    super();
     this.wallet = wallet;
   }
 
