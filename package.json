@@ -1,0 +1,29 @@
+{
+  "name": "project-template",
+  "version": "0.0.1",
+  "homepage": "/",
+  "scripts": {
+    "fmt": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
+    "fmt:check": "prettier --check '**/*.{js,jsx,ts,tsx,json}'",
+    "test": "bunx playwright test",
+    "test:ui": "bunx playwright test --ui",
+    "dev": "cat welcome.txt"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.1",
+    "@types/node": "^20.11.0",
+    "prettier": "^3.3.3"
+  }
+}
