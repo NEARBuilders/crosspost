@@ -5,8 +5,12 @@ import "../styles/globals.css";
 
 import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
+import { SOCIAL_CONTRACT } from "@/lib/near-social";
 
-const wallet = new Wallet({ networkId: NETWORK_ID });
+const wallet = new Wallet({
+  networkId: NETWORK_ID,
+  createAccessKeyFor: SOCIAL_CONTRACT[NETWORK_ID],
+});
 
 export default function App({ Component, pageProps }) {
   const [signedAccountId, setSignedAccountId] = useState("");

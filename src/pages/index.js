@@ -1,10 +1,10 @@
 import { ConnectToNearButton } from "@/components/connext-to-near";
+import { useTwitterConnection } from "@/store/twitter-store";
 import { PenSquare } from "lucide-react";
 import { useContext } from "react";
-import { ComposePost, PostForm } from "../components/compose-post";
+import { ComposePost } from "../components/compose-post";
 import { ConnectToTwitterButton } from "../components/connect-to-twitter";
 import { NearContext } from "../wallets/near";
-import { useTwitterConnection } from "@/store/twitter-store";
 
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
