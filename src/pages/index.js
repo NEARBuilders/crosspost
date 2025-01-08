@@ -16,11 +16,11 @@ export default function Home() {
   const post = async (text) => {
     // TODO: generic interface for external plugins
     const promises = [];
-    
+
     if (NEAR_SOCIAL_ENABLED) {
       promises.push(postToNearSocial(text));
     }
-    
+
     if (TWITTER_ENABLED) {
       promises.push(tweet(text));
     }
