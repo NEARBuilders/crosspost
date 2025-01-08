@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['builders.mypinata.cloud'],
+    domains: ["builders.mypinata.cloud"],
   },
 };
 
