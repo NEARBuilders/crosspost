@@ -54,4 +54,16 @@ export class TwitterService {
 
     return userClient.v2.tweet(text);
   }
+
+  async getUserInfo(accessToken, accessSecret) {
+    const userClient = new TwitterApi({
+      appKey: this.apiKey,
+      appSecret: this.apiSecret,
+      accessToken,
+      accessSecret,
+    });
+
+    const me = await userClient.v2.me();
+    return me.data;
+  }
 }

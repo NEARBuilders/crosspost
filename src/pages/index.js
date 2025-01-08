@@ -11,7 +11,7 @@ import { useTwitterConnection } from "@/store/twitter-store";
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
 
-  const { isConnected } = useTwitterConnection();
+  const { isConnected, handle } = useTwitterConnection();
 
   return (
     <div className="min-h-screen p-8 relative bg-gray-100">
@@ -20,20 +20,27 @@ export default function Home() {
 
         {/* TOP BAR ( WINDOW CONTAINER ) */}
         <header className="border-b-2 border-gray-800 p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
             <div className="flex items-center gap-2">
               <PenSquare size={24} />
               <h1 className="text-2xl font-bold">crosspost.near</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-4 sm:flex-row">
               <ConnectToNearButton />
               {signedAccountId && <ConnectToTwitterButton />}
             </div>
           </div>
           {signedAccountId && (
-            <p className="mt-2 text-sm text-gray-600">
-              Connected as: {signedAccountId}
-            </p>
+            <div className="mt-4 space-y-1 text-center sm:text-left">
+              <p className="text-sm text-gray-600">
+                Connected as: {signedAccountId}
+              </p>
+              {isConnected && handle && (
+                <p className="text-sm text-gray-600">
+                  Twitter Account: @{handle}
+                </p>
+              )}
+            </div>
           )}
         </header>
 
@@ -49,7 +56,7 @@ export default function Home() {
           ) : !isConnected ? (
             <div className="text-center py-12">
               <p className="text-lg text-gray-600">
-                Connect X to start posting
+                Connect Twitter to start posting
               </p>
             </div>
           ) : (

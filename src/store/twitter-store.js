@@ -4,11 +4,12 @@ import { connectTwitter, disconnectTwitter, status, tweet } from "../lib/twitter
 const store = (set, get) => ({
   isConnected: false,
   isConnecting: false,
+  handle: null,
   error: null,
   post: tweet,
   checkConnection: async () => {
-    const isConnected = await status();
-    set({ isConnected });
+    const { isConnected, handle } = await status();
+    set({ isConnected, handle });
   },
   connect: async () => {
     if (get().isConnecting) return;
@@ -22,7 +23,8 @@ const store = (set, get) => ({
   },
   disconnect: async () => {
     await disconnectTwitter();
-    set({ isConnected: false, isConnecting: false, error: null });
+    set({ isConnected: false, isConnecting: false, handle: null, error: null });
+    await get().checkConnection();
   }
 });
 
@@ -32,6 +34,7 @@ export const useTwitterStore = create(store);
 export const useTwitterConnection = () => {
   const isConnected = useTwitterStore((state) => state.isConnected);
   const isConnecting = useTwitterStore((state) => state.isConnecting);
+  const handle = useTwitterStore((state) => state.handle);
   const connect = useTwitterStore((state) => state.connect);
   const disconnect = useTwitterStore((state) => state.disconnect);
   const checkConnection = useTwitterStore((state) => state.checkConnection);
@@ -39,6 +42,7 @@ export const useTwitterConnection = () => {
   return {
     isConnected,
     isConnecting,
+    handle,
     connect,
     disconnect,
     checkConnection
