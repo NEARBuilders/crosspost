@@ -4,8 +4,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'builders.mypinata.cloud',
+        protocol: "https",
+        hostname: "builders.mypinata.cloud",
       },
     ],
   },
