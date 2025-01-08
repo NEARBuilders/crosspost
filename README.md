@@ -5,10 +5,10 @@
 
 <div align="center">
 
-<h1 style="font-size: 2.5rem; font-weight: bold;">Project Title</h1>
+<h1 style="font-size: 2.5rem; font-weight: bold;">crosspost</h1>
 
   <p>
-    <strong>a basic project template for new projects</strong>
+    <strong>user interface to crosspost across various platforms</strong>
   </p>
 
 </div>
