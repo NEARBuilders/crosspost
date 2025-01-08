@@ -8,6 +8,7 @@ import { GithubForkRibbon } from "@/components/github-fork-ribbon";
 import { SOCIAL_CONTRACT } from "@/lib/near-social";
 import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
+import { WindowContainer } from "@/components/window-container";
 
 const wallet = new Wallet({
   networkId: NETWORK_ID,
@@ -68,7 +69,9 @@ export default function App({ Component, pageProps }) {
       </Head>
       <GithubForkRibbon />
       <NearContext.Provider value={{ wallet, signedAccountId }}>
-        <Component {...pageProps} />
+        <WindowContainer>
+          <Component {...pageProps} />
+        </WindowContainer>
       </NearContext.Provider>
       <Footer />
     </>
