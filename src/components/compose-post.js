@@ -15,7 +15,7 @@ export function ComposePost({ onSubmit }) {
     try {
       setError("");
 
-      onSubmit(text); // any preprocessing?
+      await onSubmit(text);
 
       setText("");
     } catch (err) {

@@ -17,7 +17,7 @@ const store = (set, get) => ({
     }
 
     try {
-      const transaction = await service.post({
+      const transaction = await service.createPost({
         type: "md",
         text: content,
       });
