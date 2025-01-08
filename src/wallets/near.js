@@ -74,8 +74,13 @@ export class Wallet {
    * Logout the user
    */
   signOut = async () => {
-    const selectedWallet = await (await this.selector).wallet();
-    selectedWallet.signOut();
+    try {
+      const selectedWallet = await (await this.selector).wallet();
+      await selectedWallet.signOut();
+    } catch (error) {
+      console.log("error signing out");
+      // throw error;
+    }
   };
 
   /**
