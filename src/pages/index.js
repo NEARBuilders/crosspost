@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { NearContext } from '../wallets/near';
-import { useXStore } from '../store/xStore';
+import { useXStore } from '../store/twitter-store';
 import { useNearSocialStore } from '../store/near-social-store';
 import { PenSquare, Wallet } from 'lucide-react';
 import { XButton } from '../components/connect-to-twitter';

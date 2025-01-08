@@ -1,27 +1,22 @@
-import { useState } from 'react';
-import { useXStore } from '../store/xStore';
-import { useNearSocialPost } from '../store/near-social-store';
+import { useState } from "react";
 
-export function PostForm() {
-  const [text, setText] = useState('');
-  const [error, setError] = useState('');
-  const postToTwitter = useXStore((state) => state.post);
-  const { post: postToNearSocial } = useNearSocialPost();
+export function ComposePost({ onSubmit }) {
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     if (!text.trim()) {
-      setError('Please enter your post text');
+      setError("Please enter your post text");
       return;
     }
 
     try {
-      setError('');
-      // await postToTwitter(text);
-      await postToNearSocial(text);
-      setText('');
+      setError("");
+      onSubmit();
+      setText("");
     } catch (err) {
-      setError('Failed to send post');
-      console.error('Post error:', err);
+      setError("Failed to send post");
+      console.error("Post error:", err);
     }
   };
 
@@ -38,7 +33,7 @@ export function PostForm() {
         <span className="text-sm text-gray-500">
           {text.length}/280 characters
         </span>
-        <button 
+        <button
           onClick={handleSubmit}
           disabled={!text.trim()}
           className="flex items-center gap-2 px-6 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -47,9 +42,7 @@ export function PostForm() {
         </button>
       </div>
 
-      {error && (
-        <p className="text-red-500 text-sm mt-2">{error}</p>
-      )}
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   );
 }

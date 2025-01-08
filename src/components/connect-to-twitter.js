@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import { useXConnection } from '../store/xStore';
+import { useTwitterConnection } from '../store/twitter-store';
 import { XIcon } from './icons/XIcon';
 
-export function XButton() {
-  const { isConnected, isConnecting, connect, disconnect, checkConnection } = useXConnection();
+export function ConnectToTwitter() {
+  const { isConnected, isConnecting, connect, disconnect, checkConnection } = useTwitterConnection();
   
   useEffect(() => {
     checkConnection();

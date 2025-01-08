@@ -4,10 +4,12 @@ import { NearSocialService } from '../services/near-social';
 const store = (set, get) => ({
   wallet: null,
   service: null,
+  // TODO: move to init() the plugin, we're initializing the service with the wallet (when client renders in _app)
   setWallet: (wallet) => {
     const service = new NearSocialService(wallet);
     set({ wallet, service });
   },
+  // TODO: posting plugin's standard interface
   post: async (content) => {
     const { service } = get();
     if (!service) {
@@ -15,7 +17,7 @@ const store = (set, get) => ({
     }
     
     try {
-      const transaction = await service.createPost({
+      const transaction = await service.post({
         type: 'md',
         text: content
       });
@@ -24,7 +26,8 @@ const store = (set, get) => ({
         throw new Error('Failed to create post transaction');
       }
 
-      await get().wallet.signAndSendTransactions({
+      await get().wallet.signAndSendTransactions({ // we're in application state
+      // plugin is using it as middleware for signing transactions
         transactions: [{
           receiverId: transaction.contractId,
           actions: transaction.actions

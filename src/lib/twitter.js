@@ -1,3 +1,6 @@
+// SDK to communicate with the API
+// API uses the service
+
 export function getXTokens() {
   const cookies = document.cookie.split(';').reduce((acc, cookie) => {
     const [key, value] = cookie.trim().split('=');
@@ -11,7 +14,7 @@ export function getXTokens() {
   };
 }
 
-export async function connectX() {
+export async function connectTwitter() {
   const response = await fetch('/api/twitter/auth', {
     method: 'POST',
   });
@@ -24,7 +27,7 @@ export async function connectX() {
   window.location.href = data.authUrl;
 }
 
-export async function disconnectX() {
+export async function disconnectTwitter() {
   await fetch('/api/twitter/auth', {
     method: 'DELETE'
   });
@@ -42,7 +45,7 @@ export async function status() {
   return response.json();
 }
 
-export async function post(text) {
+export async function tweet(text) {
   const response = await fetch('/api/twitter/tweet', {
     method: 'POST',
     headers: {

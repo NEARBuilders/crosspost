@@ -1,10 +1,11 @@
 import { create } from 'zustand';
-import { connectX, disconnectX, status } from "../lib/x";
+import { connectTwitter, disconnectTwitter, status, tweet } from "../lib/twitter";
 
 const store = (set, get) => ({
   isConnected: false,
   isConnecting: false,
   error: null,
+  post: tweet,
   checkConnection: async () => {
     const isConnected = await status();
     set({ isConnected });
@@ -13,27 +14,27 @@ const store = (set, get) => ({
     if (get().isConnecting) return;
     try {
       set({ isConnecting: true, error: null });
-      await connectX();
+      await connectTwitter();
     } catch (err) {
       set({ isConnecting: false, error: 'Failed to connect to X' });
       console.error('X connection error:', err);
     }
   },
   disconnect: async () => {
-    await disconnectX();
+    await disconnectTwitter();
     set({ isConnected: false, isConnecting: false, error: null });
   }
 });
 
-export const useXStore = create(store);
+export const useTwitterStore = create(store);
 
 // Focused hooks
-export const useXConnection = () => {
-  const isConnected = useXStore((state) => state.isConnected);
-  const isConnecting = useXStore((state) => state.isConnecting);
-  const connect = useXStore((state) => state.connect);
-  const disconnect = useXStore((state) => state.disconnect);
-  const checkConnection = useXStore((state) => state.checkConnection);
+export const useTwitterConnection = () => {
+  const isConnected = useTwitterStore((state) => state.isConnected);
+  const isConnecting = useTwitterStore((state) => state.isConnecting);
+  const connect = useTwitterStore((state) => state.connect);
+  const disconnect = useTwitterStore((state) => state.disconnect);
+  const checkConnection = useTwitterStore((state) => state.checkConnection);
 
   return {
     isConnected,
