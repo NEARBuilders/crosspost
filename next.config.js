@@ -2,7 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["builders.mypinata.cloud"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'builders.mypinata.cloud',
+      },
+    ],
   },
 };
 
