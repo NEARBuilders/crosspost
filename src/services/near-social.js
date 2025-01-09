@@ -31,7 +31,6 @@ export class NearSocialService {
         type: "md",
         text: combinedText,
       };
-      
 
       const transaction = await NearSocialClient.set({
         data: {
