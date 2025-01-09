@@ -31,22 +31,26 @@ export function ComposePost({ onSubmit }) {
       // Converting single post to multiple
       const text = posts[0].text;
       // Only split if there's actual content and it contains ---
-      if (text.trim() && text.includes('---')) {
-        const threads = text.split('---')
-          .map(t => t.trim())
-          .filter(t => t)
-          .map(text => ({ text, image: null }));
+      if (text.trim() && text.includes("---")) {
+        const threads = text
+          .split("---")
+          .map((t) => t.trim())
+          .filter((t) => t)
+          .map((text) => ({ text, image: null }));
         setPosts(threads.length > 0 ? threads : [{ text: "", image: null }]);
       }
     } else {
       // Converting multiple posts to single
-      const combinedText = posts.map(p => p.text).filter(t => t.trim()).join('\n---\n');
+      const combinedText = posts
+        .map((p) => p.text)
+        .filter((t) => t.trim())
+        .join("\n---\n");
       setPosts([{ text: combinedText, image: null }]);
     }
   };
 
   const handleSubmit = async () => {
-    const nonEmptyPosts = posts.filter(p => p.text.trim());
+    const nonEmptyPosts = posts.filter((p) => p.text.trim());
     if (nonEmptyPosts.length === 0) {
       setError("Please enter your post text");
       return;
@@ -123,11 +127,13 @@ export function ComposePost({ onSubmit }) {
 
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-500">
-          {isThreadMode ? `${posts.length} parts` : `${posts[0].text.length} characters`}
+          {isThreadMode
+            ? `${posts.length} parts`
+            : `${posts[0].text.length} characters`}
         </span>
         <button
           onClick={handleSubmit}
-          disabled={posts.every(p => !p.text.trim())}
+          disabled={posts.every((p) => !p.text.trim())}
           className="flex items-center gap-2 px-6 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Post

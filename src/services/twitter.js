@@ -54,9 +54,9 @@ export class TwitterService {
 
     // Handle array of post objects
     if (!Array.isArray(posts)) {
-      throw new Error('Posts must be an array');
+      throw new Error("Posts must be an array");
     }
-    
+
     if (posts.length === 1) {
       // Single tweet
       return userClient.v2.tweet(posts[0].text);
@@ -64,17 +64,17 @@ export class TwitterService {
       // Thread implementation
       let lastTweetId = null;
       const responses = [];
-      
+
       for (const post of posts) {
-        const tweetData = lastTweetId 
+        const tweetData = lastTweetId
           ? { text: post.text, reply: { in_reply_to_tweet_id: lastTweetId } }
           : { text: post.text };
-          
+
         const response = await userClient.v2.tweet(tweetData);
         responses.push(response);
         lastTweetId = response.data.id;
       }
-      
+
       return responses;
     }
   }

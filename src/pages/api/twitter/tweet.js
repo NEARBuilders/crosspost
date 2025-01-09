@@ -7,7 +7,11 @@ export default async function handler(req, res) {
   }
 
   const { posts } = req.body;
-  if (!Array.isArray(posts) || posts.length === 0 || !posts.every(p => p.text?.trim())) {
+  if (
+    !Array.isArray(posts) ||
+    posts.length === 0 ||
+    !posts.every((p) => p.text?.trim())
+  ) {
     return res.status(400).json({ error: "Valid posts array is required" });
   }
 
@@ -20,10 +24,14 @@ export default async function handler(req, res) {
 
   try {
     const twitterService = await TwitterService.initialize();
-    const response = await twitterService.tweet(accessToken, accessSecret, posts);
-    res.status(200).json({ 
+    const response = await twitterService.tweet(
+      accessToken,
+      accessSecret,
+      posts,
+    );
+    res.status(200).json({
       success: true,
-      data: Array.isArray(response) ? response : [response]
+      data: Array.isArray(response) ? response : [response],
     });
   } catch (error) {
     console.error("Tweet error:", error);

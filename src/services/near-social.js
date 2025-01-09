@@ -25,8 +25,8 @@ export class NearSocialService {
 
     try {
       // Combine all posts into a single content, joining with newlines
-      const combinedText = posts.map(p => p.text).join('\n\n');
-      
+      const combinedText = posts.map((p) => p.text).join("\n\n");
+
       const content = {
         type: "md",
         text: combinedText,
