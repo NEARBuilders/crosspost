@@ -29,7 +29,9 @@ export class TwitterService {
 
   async getAuthLink(callbackUrl) {
     const { url, oauth_token, oauth_token_secret } =
-      await this.client.generateAuthLink(callbackUrl);
+      await this.client.generateAuthLink(callbackUrl, {
+        scope: ["tweet.read", "tweet.write", "users.read"],
+      });
     return { url, oauth_token, oauth_token_secret };
   }
 
