@@ -44,7 +44,7 @@ export class TwitterService {
     return tempClient.login(oauthVerifier);
   }
 
-  async tweet(accessToken, accessSecret, text) {
+  async tweet(accessToken, accessSecret, posts) {
     const userClient = new TwitterApi({
       appKey: this.apiKey,
       appSecret: this.apiSecret,
@@ -52,7 +52,31 @@ export class TwitterService {
       accessSecret,
     });
 
-    return userClient.v2.tweet(text);
+    // Handle array of post objects
+    if (!Array.isArray(posts)) {
+      throw new Error('Posts must be an array');
+    }
+    
+    if (posts.length === 1) {
+      // Single tweet
+      return userClient.v2.tweet(posts[0].text);
+    } else {
+      // Thread implementation
+      let lastTweetId = null;
+      const responses = [];
+      
+      for (const post of posts) {
+        const tweetData = lastTweetId 
+          ? { text: post.text, reply: { in_reply_to_tweet_id: lastTweetId } }
+          : { text: post.text };
+          
+        const response = await userClient.v2.tweet(tweetData);
+        responses.push(response);
+        lastTweetId = response.data.id;
+      }
+      
+      return responses;
+    }
   }
 
   async getUserInfo(accessToken, accessSecret) {

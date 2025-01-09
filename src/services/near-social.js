@@ -19,11 +19,19 @@ export class NearSocialService {
     this.wallet = wallet;
   }
 
-  async createPost(content) {
+  async createPost(posts) {
     const account = await this.wallet.getAccount();
     const { publicKey, accountId } = account;
 
     try {
+      // Combine all posts into a single content, joining with newlines
+      const combinedText = posts.map(p => p.text).join('\n\n');
+      
+      const content = {
+        type: "md",
+        text: combinedText,
+      };
+
       const transaction = await NearSocialClient.set({
         data: {
           [accountId]: {

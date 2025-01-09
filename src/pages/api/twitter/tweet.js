@@ -6,9 +6,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { text } = req.body;
-  if (!text?.trim()) {
-    return res.status(400).json({ error: "Tweet text is required" });
+  const { posts } = req.body;
+  if (!Array.isArray(posts) || posts.length === 0 || !posts.every(p => p.text?.trim())) {
+    return res.status(400).json({ error: "Valid posts array is required" });
   }
 
   const cookies = parse(req.headers.cookie || "");
@@ -20,8 +20,11 @@ export default async function handler(req, res) {
 
   try {
     const twitterService = await TwitterService.initialize();
-    await twitterService.tweet(accessToken, accessSecret, text);
-    res.status(200).json({ success: true });
+    const response = await twitterService.tweet(accessToken, accessSecret, posts);
+    res.status(200).json({ 
+      success: true,
+      data: Array.isArray(response) ? response : [response]
+    });
   } catch (error) {
     console.error("Tweet error:", error);
     res.status(500).json({ error: "Failed to send tweet" });
