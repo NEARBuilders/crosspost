@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDraftsStore } from "../store/drafts-store";
+import { DraftsModal } from "./drafts-modal";
 
 // This "widget" handles all of the editing for post content
 // Calls "onSubmit" with an array of post objects
@@ -7,6 +9,7 @@ export function ComposePost({ onSubmit }) {
   const [isThreadMode, setIsThreadMode] = useState(false);
   const [posts, setPosts] = useState([{ text: "", image: null }]);
   const [error, setError] = useState("");
+  const { setModalOpen, saveDraft } = useDraftsStore();
 
   const handleTextChange = (index, value) => {
     const newPosts = [...posts];
@@ -69,7 +72,13 @@ export function ComposePost({ onSubmit }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-end mb-2">
+      <div className="flex justify-end gap-2 mb-2">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="text-sm px-3 py-1 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
+        >
+          Drafts
+        </button>
         <button
           onClick={toggleMode}
           className="text-sm px-3 py-1 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
@@ -125,22 +134,32 @@ export function ComposePost({ onSubmit }) {
         </div>
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-2">
         <span className="text-sm text-gray-500">
           {isThreadMode
             ? `${posts.length} parts`
             : `${posts[0].text.length} characters`}
         </span>
-        <button
-          onClick={handleSubmit}
-          disabled={posts.every((p) => !p.text.trim())}
-          className="flex items-center gap-2 px-6 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Post
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => saveDraft(posts)}
+            disabled={posts.every((p) => !p.text.trim())}
+            className="px-4 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Save Draft
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={posts.every((p) => !p.text.trim())}
+            className="flex items-center gap-2 px-6 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Post
+          </button>
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      <DraftsModal onSelect={setPosts} />
     </div>
   );
 }
