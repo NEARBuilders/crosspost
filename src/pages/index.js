@@ -13,16 +13,16 @@ export default function Home() {
 
   // posts to all the enabled target platforms
   // errors are handled in ComposePost
-  const post = async (text) => {
+  const post = async (posts) => {
     // TODO: generic interface for external plugins
     const promises = [];
 
     if (NEAR_SOCIAL_ENABLED) {
-      promises.push(postToNearSocial(text));
+      promises.push(postToNearSocial(posts));
     }
 
     if (TWITTER_ENABLED) {
-      promises.push(tweet(text));
+      promises.push(tweet(posts));
     }
 
     await Promise.all(promises); // execute all postings

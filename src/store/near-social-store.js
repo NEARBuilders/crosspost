@@ -17,10 +17,7 @@ const store = (set, get) => ({
     }
 
     try {
-      const transaction = await service.createPost({
-        type: "md",
-        text: content,
-      });
+      const transaction = await service.createPost(content);
 
       if (!transaction) {
         throw new Error("Failed to create post transaction");
