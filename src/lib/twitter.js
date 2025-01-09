@@ -45,13 +45,13 @@ export async function status() {
   return response.json();
 }
 
-export async function tweet(text) {
+export async function tweet(posts) {
   const response = await fetch("/api/twitter/tweet", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ posts }),
   });
 
   if (!response.ok) {
