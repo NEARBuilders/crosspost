@@ -35,6 +35,9 @@
     "@near-wallet-selector/meteor-wallet": "^8.9.13",
     "@near-wallet-selector/modal-ui": "^8.9.13",
     "@near-wallet-selector/my-near-wallet": "^8.9.13",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.16.1",
@@ -43,6 +46,8 @@
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
     "twitter-api-v2": "^1.19.0"
   },
   "devDependencies": {

@@ -5,6 +5,7 @@ import { NearContext } from "../wallets/near";
 import { NEAR_SOCIAL_ENABLED, TWITTER_ENABLED } from "@/config";
 import { useNearSocialPost } from "@/store/near-social-store";
 import { tweet } from "@/lib/twitter";
+import { TwitterApiNotice } from "@/components/twitter-api-notice";
 
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
@@ -30,6 +31,7 @@ export default function Home() {
 
   return (
     <main className="p-6">
+      <TwitterApiNotice />
       {/* MAIN CONTENT */}
 
       {!signedAccountId ? (
