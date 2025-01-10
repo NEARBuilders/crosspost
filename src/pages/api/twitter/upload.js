@@ -31,25 +31,15 @@ export default async function handler(req, res) {
     const file = files.media[0];
     const twitterService = await TwitterService.initialize();
     
-    // Verify OAuth 1.0a client is available
     if (!twitterService.oauth1Client) {
       console.error("OAuth 1.0a client not initialized - check credentials");
       return res.status(500).json({ 
         error: "Server is not configured for media uploads. OAuth 1.0a credentials are missing." 
       });
     }
-    
-    // Log file details for debugging
-    console.log("File details:", {
-      filepath: file.filepath,
-      size: file.size,
-      type: file.mimetype,
-      originalFilename: file.originalFilename
-    });
 
     try {
       const mediaId = await twitterService.uploadMedia(file.filepath, file.mimetype);
-      console.log("Upload successful, mediaId:", mediaId);
       return res.status(200).json({
         success: true,
         mediaId,

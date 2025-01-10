@@ -10,14 +10,14 @@ const store = (set, get) => ({
     set({ wallet, service });
   },
   // TODO: posting plugin's standard interface
-  post: async (content) => {
+  post: async (posts) => {
     const { service } = get();
     if (!service) {
       throw new Error("Near Social service not initialized");
     }
 
     try {
-      const transaction = await service.createPost(content);
+      const transaction = await service.createPost(posts);
 
       if (!transaction) {
         throw new Error("Failed to create post transaction");
