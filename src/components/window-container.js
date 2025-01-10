@@ -92,7 +92,7 @@ export function WindowContainer({ children }) {
         className="mx-1 sm:mx-auto min-h-[790px] max-w-4xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]"
       >
         <WindowControls />
-        <div className="p-8">{children}</div>
+        <div className="sm:p-8 p-2">{children}</div>
       </motion.div>
     </div>
   );
