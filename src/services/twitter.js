@@ -10,7 +10,7 @@ export class TwitterService {
     }
     this.client = new TwitterApi({
       clientId: clientId,
-      clientSecret: clientSecret
+      clientSecret: clientSecret,
     });
   }
 
@@ -25,16 +25,16 @@ export class TwitterService {
     // Use OAuth 2.0 with PKCE for more granular scope control
     const { url, codeVerifier, state } = this.client.generateOAuth2AuthLink(
       callbackUrl,
-      { scope: ['tweet.read', 'tweet.write', 'users.read'] }
+      { scope: ["tweet.read", "tweet.write", "users.read"] },
     );
     return { url, codeVerifier, state };
   }
 
   async handleCallback(code, codeVerifier, state) {
-    return this.client.loginWithOAuth2({ 
+    return this.client.loginWithOAuth2({
       code,
       codeVerifier,
-      redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/twitter/callback`
+      redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/twitter/callback`,
     });
   }
 

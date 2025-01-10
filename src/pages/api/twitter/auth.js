@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     // Store PKCE and state values in cookies
     res.setHeader("Set-Cookie", [
       `code_verifier=${authData.codeVerifier}; Path=/; HttpOnly; SameSite=Lax`,
-      `oauth_state=${authData.state}; Path=/; HttpOnly; SameSite=Lax`
+      `oauth_state=${authData.state}; Path=/; HttpOnly; SameSite=Lax`,
     ]);
     res.status(200).json({ authUrl: authData.url });
   } catch (error) {

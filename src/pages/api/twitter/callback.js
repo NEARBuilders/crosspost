@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const { accessToken, refreshToken } = await twitterService.handleCallback(
       code,
       code_verifier,
-      state
+      state,
     );
 
     // Store tokens in HttpOnly cookies
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       `twitter_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
       `twitter_refresh_token=${refreshToken}; Path=/; HttpOnly; SameSite=Lax`,
       "code_verifier=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
-      "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
+      "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
     ]);
 
     // Clean redirect since we're using Zustand store
