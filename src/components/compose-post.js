@@ -37,25 +37,14 @@ export function ComposePost({ onSubmit }) {
     clearAutoSave, 
     autosave,
     isThreadMode,
-    setThreadMode
+    setThreadMode,
+    isModalOpen
   } = useDraftsStore();
 
   // Memoized draft save handler
   const handleSaveDraft = useCallback(() => {
     saveDraft(posts);
   }, [saveDraft, posts]);
-
-  // Load auto-saved content on mount and handle cleanup
-  useEffect(() => {
-    if (autosave?.posts?.length > 0) {
-      setPosts(autosave.posts);
-    }
-
-    return () => {
-      cleanupMediaPreviews();
-      cleanup();
-    };
-  }, [autosave, cleanupMediaPreviews, cleanup]);
 
   // Custom hooks
   const { handleMediaUpload, removeMedia, cleanupMediaPreviews, recreateMediaPreviews } = usePostMedia(setPosts, setError, saveAutoSave);
@@ -71,6 +60,18 @@ export function ComposePost({ onSubmit }) {
     setPosts, 
     saveAutoSave
   );
+
+  // Load auto-saved content on mount and handle cleanup
+  useEffect(() => {
+    if (autosave?.posts?.length > 0) {
+      setPosts(autosave.posts);
+    }
+
+    return () => {
+      if (cleanupMediaPreviews) cleanupMediaPreviews();
+      if (cleanup) cleanup();
+    };
+  }, [autosave, cleanupMediaPreviews, cleanup]);
 
   // Memoized handlers
   const handleModalOpen = useCallback(() => {
@@ -244,7 +245,7 @@ export function ComposePost({ onSubmit }) {
       </div>
 
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      <DraftsModal onSelect={setPosts} />
+      {isModalOpen && <DraftsModal onSelect={setPosts} />}
     </div>
   );
 }

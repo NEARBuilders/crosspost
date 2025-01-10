@@ -6,10 +6,9 @@ import { Button } from "./ui/button";
 export function DraftsModal({ onSelect }) {
   const { drafts, isModalOpen, setModalOpen, deleteDraft } = useDraftsStore();
 
-  if (!isModalOpen) return null;
-
   return (
     <AnimatePresence>
+      {isModalOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -79,6 +78,7 @@ export function DraftsModal({ onSelect }) {
           )}
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }

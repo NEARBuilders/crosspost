@@ -43,12 +43,11 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
         return {
           text: cleanText,
           mediaId: posts[index].mediaId,
-          mediaPreview: posts[index].mediaPreview,
-          mediaData: posts[index].mediaData // Preserve the base64 data
+          mediaPreview: posts[index].mediaPreview
         };
       }
 
-      return { text: cleanText, mediaId: null, mediaPreview: null, mediaData: null };
+      return { text: cleanText, mediaId: null, mediaPreview: null };
     });
 
     // If we have fewer parts than original posts, preserve remaining posts' media
@@ -58,14 +57,13 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
           newPosts.push({
             text: "",
             mediaId: posts[i].mediaId,
-            mediaPreview: posts[i].mediaPreview,
-            mediaData: posts[i].mediaData
+            mediaPreview: posts[i].mediaPreview
           });
         }
       }
     }
 
-    return newPosts.length > 0 ? newPosts : [{ text: "", mediaId: null, mediaPreview: null, mediaData: null }];
+    return newPosts.length > 0 ? newPosts : [{ text: "", mediaId: null, mediaPreview: null }];
   }, [posts]);
 
   // Debounced autosave function
@@ -90,24 +88,25 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
   const convertToThread = useCallback((singleText) => {
     // Only split if there's a "---" surrounded by newlines
     if (singleText.includes("\n---\n")) {
-      console.log("it includes");
       const newPosts = splitTextIntoPosts(singleText);
-      console.log("now new posts", newPosts);
       setPosts(newPosts);
     } else {
-      // If no splits, preserve the current post with its media
-      setPosts([{ ...posts[0], mediaPreview: posts[0].mediaData }]);
+      // If no splits, preserve the current post with its media preview and ID
+      setPosts([{
+        ...posts[0],
+        mediaPreview: posts[0].mediaPreview,
+        mediaId: posts[0].mediaId
+      }]);
     }
   }, [splitTextIntoPosts, setPosts, posts]);
 
   const convertToSingle = useCallback(() => {
-    // Preserve all media from the first post
+    // Preserve media preview and ID from the first post
     const firstPost = posts[0];
     const newPost = { 
       text: getCombinedText,
       mediaId: firstPost.mediaId,
-      mediaPreview: firstPost.mediaData, // Use stored base64 data
-      mediaData: firstPost.mediaData // Keep the base64 data
+      mediaPreview: firstPost.mediaPreview
     };
     setPosts([newPost]);
     debouncedAutoSave([newPost]);
@@ -116,7 +115,7 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
   // Thread management functions
   const addThread = useCallback(() => {
     setPosts(currentPosts => {
-      const newPosts = [...currentPosts, { text: "", mediaId: null, mediaPreview: null, mediaData: null }];
+      const newPosts = [...currentPosts, { text: "", mediaId: null, mediaPreview: null }];
       debouncedAutoSave(newPosts);
       return newPosts;
     });
