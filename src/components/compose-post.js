@@ -58,7 +58,7 @@ export function ComposePost({ onSubmit }) {
   }, [autosave, cleanupMediaPreviews, cleanup]);
 
   // Custom hooks
-  const { handleMediaUpload, removeMedia, cleanupMediaPreviews } = usePostMedia(setPosts, setError);
+  const { handleMediaUpload, removeMedia, cleanupMediaPreviews, recreateMediaPreviews } = usePostMedia(setPosts, setError, saveAutoSave);
   const { 
     handleTextChange, 
     addThread, 
@@ -85,7 +85,16 @@ export function ComposePost({ onSubmit }) {
       convertToThread(posts[0].text);
       setThreadMode(true);
     }
-  }, [isThreadMode, convertToSingle, convertToThread, posts, setThreadMode]);
+    // Recreate previews and save after mode switch
+    setTimeout(() => {
+      recreateMediaPreviews();
+      // Use latest posts state when saving
+      setPosts(currentPosts => {
+        saveAutoSave(currentPosts);
+        return currentPosts;
+      });
+    }, 0);
+  }, [isThreadMode, convertToSingle, convertToThread, posts, setThreadMode, recreateMediaPreviews, saveAutoSave]);
 
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
