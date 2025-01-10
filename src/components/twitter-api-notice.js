@@ -15,11 +15,18 @@ export function TwitterApiNotice() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setOpen(true);
-    }, 800);
+    // Check if user has already seen the notice
+    const hasSeenNotice = localStorage.getItem('hasSeenTwitterApiNotice');
+    
+    if (!hasSeenNotice) {
+      const timer = setTimeout(() => {
+        setOpen(true);
+        // Mark that user has seen the notice
+        localStorage.setItem('hasSeenTwitterApiNotice', 'true');
+      }, 800);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
