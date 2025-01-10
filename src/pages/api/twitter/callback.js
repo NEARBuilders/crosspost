@@ -6,26 +6,33 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { oauth_token, oauth_verifier } = req.query;
+  const { code, state } = req.query;
   const cookies = parse(req.headers.cookie || "");
-  const oauth_token_secret = cookies.oauth_token_secret;
+  const { code_verifier, oauth_state } = cookies;
 
-  if (!oauth_token || !oauth_verifier || !oauth_token_secret) {
+  if (!code || !state || !code_verifier || !oauth_state) {
     return res.status(400).json({ error: "Missing OAuth parameters" });
+  }
+
+  // Verify the state parameter to prevent CSRF attacks
+  if (state !== oauth_state) {
+    return res.status(400).json({ error: "Invalid OAuth state" });
   }
 
   try {
     const twitterService = await TwitterService.initialize();
-    const { accessToken, accessSecret } = await twitterService.handleCallback(
-      oauth_token,
-      oauth_verifier,
-      oauth_token_secret,
+    const { accessToken, refreshToken } = await twitterService.handleCallback(
+      code,
+      code_verifier,
+      state
     );
 
+    // Store tokens in HttpOnly cookies
     res.setHeader("Set-Cookie", [
       `twitter_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
-      `twitter_access_secret=${accessSecret}; Path=/; HttpOnly; SameSite=Lax`,
-      "oauth_token_secret=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+      `twitter_refresh_token=${refreshToken}; Path=/; HttpOnly; SameSite=Lax`,
+      "code_verifier=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+      "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
     ]);
 
     // Clean redirect since we're using Zustand store
