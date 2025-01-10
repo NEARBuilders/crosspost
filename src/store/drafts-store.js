@@ -52,13 +52,13 @@ export const useDraftsStore = create((set, get) => ({
   },
 
   saveAutoSave: (posts) => {
-    if (posts.every(p => !p.text.trim())) {
+    if (posts.every((p) => !p.text.trim())) {
       // If all posts are empty, clear autosave
       localStorage.removeItem(AUTOSAVE_KEY);
       set({ autosave: null });
       return;
     }
-    
+
     const autosave = {
       posts,
       updatedAt: new Date().toISOString(),

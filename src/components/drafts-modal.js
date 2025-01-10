@@ -30,7 +30,9 @@ export function DraftsModal({ onSelect }) {
           </div>
 
           {drafts.length === 0 ? (
-            <p className="text-gray-600 text-center py-8">No drafts saved yet</p>
+            <p className="text-gray-600 text-center py-8">
+              No drafts saved yet
+            </p>
           ) : (
             <div className="space-y-4 max-h-[60vh] overflow-y-auto">
               {drafts.map((draft) => (

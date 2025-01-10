@@ -10,7 +10,8 @@ export function ComposePost({ onSubmit }) {
   const [isThreadMode, setIsThreadMode] = useState(false);
   const [posts, setPosts] = useState([{ text: "", image: null }]);
   const [error, setError] = useState("");
-  const { setModalOpen, saveDraft, saveAutoSave, clearAutoSave, autosave } = useDraftsStore();
+  const { setModalOpen, saveDraft, saveAutoSave, clearAutoSave, autosave } =
+    useDraftsStore();
 
   // Load auto-saved content on mount
   useEffect(() => {

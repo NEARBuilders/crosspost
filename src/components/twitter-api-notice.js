@@ -44,12 +44,13 @@ export function TwitterApiNotice() {
                 We've been ratelimited.
               </DialogTitle>
               <DialogDescription className="text-gray-600">
-                We exceeded our ration of 17 tweets per 24 hours... so while we wait until {format(new Date(1736524953 * 1000), "h:mm a 'on' MMM d, yyyy")}, we're raising funds to pay the absurd $200/month API fee.
+                We exceeded our ration of 17 tweets per 24 hours... so while we
+                wait until{" "}
+                {format(new Date(1736524953 * 1000), "h:mm a 'on' MMM d, yyyy")}
+                , we're raising funds to pay the absurd $200/month API fee.
               </DialogDescription>
               <div className="pt-2 flex gap-4">
-                <Button
-                  asChild
-                >
+                <Button asChild>
                   <a
                     href="https://app.potlock.org/?tab=project&projectId=crosspost.near"
                     target="_blank"
