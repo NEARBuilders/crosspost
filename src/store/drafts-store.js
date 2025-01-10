@@ -2,33 +2,40 @@ import { create } from "zustand";
 
 const STORAGE_KEY = "crosspost_drafts";
 const AUTOSAVE_KEY = "crosspost_autosave";
+const MODE_KEY = "crosspost_mode";
 
-const loadDrafts = (key = STORAGE_KEY) => {
-  if (typeof window === "undefined") return [];
+const loadFromStorage = (key) => {
+  if (typeof window === "undefined") return null;
   try {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : null;
   } catch (err) {
-    console.error("Failed to load drafts:", err);
-    return [];
+    console.error(`Failed to load from ${key}:`, err);
+    return null;
   }
 };
 
-const saveDrafts = (drafts, key = STORAGE_KEY) => {
+const saveToStorage = (key, data) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(key, JSON.stringify(drafts));
+    localStorage.setItem(key, JSON.stringify(data));
   } catch (err) {
-    console.error("Failed to save drafts:", err);
+    console.error(`Failed to save to ${key}:`, err);
   }
 };
 
 export const useDraftsStore = create((set, get) => ({
-  drafts: loadDrafts(),
-  autosave: loadDrafts(AUTOSAVE_KEY),
+  drafts: loadFromStorage(STORAGE_KEY) || [],
+  autosave: loadFromStorage(AUTOSAVE_KEY),
+  isThreadMode: loadFromStorage(MODE_KEY) || false,
   isModalOpen: false,
 
   setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
+
+  setThreadMode: (isThreadMode) => {
+    saveToStorage(MODE_KEY, isThreadMode);
+    set({ isThreadMode });
+  },
 
   saveDraft: (posts) => {
     const draft = {
@@ -38,7 +45,7 @@ export const useDraftsStore = create((set, get) => ({
     };
     set((state) => {
       const newDrafts = [draft, ...state.drafts];
-      saveDrafts(newDrafts);
+      saveToStorage(STORAGE_KEY, newDrafts);
       return { drafts: newDrafts };
     });
   },
@@ -46,7 +53,7 @@ export const useDraftsStore = create((set, get) => ({
   deleteDraft: (id) => {
     set((state) => {
       const newDrafts = state.drafts.filter((d) => d.id !== id);
-      saveDrafts(newDrafts);
+      saveToStorage(STORAGE_KEY, newDrafts);
       return { drafts: newDrafts };
     });
   },
@@ -63,7 +70,7 @@ export const useDraftsStore = create((set, get) => ({
       posts,
       updatedAt: new Date().toISOString(),
     };
-    saveDrafts(autosave, AUTOSAVE_KEY);
+    saveToStorage(AUTOSAVE_KEY, autosave);
     set({ autosave });
   },
 

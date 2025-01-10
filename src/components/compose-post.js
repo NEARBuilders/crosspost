@@ -28,11 +28,17 @@ export function ComposePost({ onSubmit }) {
     })
   );
 
-  const [isThreadMode, setIsThreadMode] = useState(false);
   const [posts, setPosts] = useState([{ text: "", mediaId: null, mediaPreview: null }]);
   const [error, setError] = useState("");
-  const { setModalOpen, saveDraft, saveAutoSave, clearAutoSave, autosave } =
-    useDraftsStore();
+  const { 
+    setModalOpen, 
+    saveDraft, 
+    saveAutoSave, 
+    clearAutoSave, 
+    autosave,
+    isThreadMode,
+    setThreadMode
+  } = useDraftsStore();
 
   // Memoized draft save handler
   const handleSaveDraft = useCallback(() => {
@@ -43,7 +49,6 @@ export function ComposePost({ onSubmit }) {
   useEffect(() => {
     if (autosave?.posts?.length > 0) {
       setPosts(autosave.posts);
-      setIsThreadMode(autosave.posts.length > 1);
     }
 
     return () => {
@@ -54,7 +59,14 @@ export function ComposePost({ onSubmit }) {
 
   // Custom hooks
   const { handleMediaUpload, removeMedia, cleanupMediaPreviews } = usePostMedia(setPosts, setError);
-  const { getCombinedText, handleTextChange, addThread, removeThread, cleanup } = usePostManagement(
+  const { 
+    handleTextChange, 
+    addThread, 
+    removeThread, 
+    cleanup,
+    convertToThread,
+    convertToSingle
+  } = usePostManagement(
     posts, 
     setPosts, 
     saveAutoSave
@@ -66,8 +78,14 @@ export function ComposePost({ onSubmit }) {
   }, [setModalOpen]);
 
   const handleModeToggle = useCallback(() => {
-    setIsThreadMode(prev => !prev);
-  }, []);
+    if (isThreadMode) {
+      convertToSingle();
+      setThreadMode(false);
+    } else {
+      convertToThread(posts[0].text);
+      setThreadMode(true);
+    }
+  }, [isThreadMode, convertToSingle, convertToThread, posts, setThreadMode]);
 
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
@@ -81,14 +99,6 @@ export function ComposePost({ onSubmit }) {
   const handleMediaInputClick = useCallback(() => {
     document.getElementById('media-upload-single').click();
   }, []);
-
-  const handleThreadTextChange = useCallback((index, value) => {
-    handleTextChange(index, value, true);
-  }, [handleTextChange]);
-
-  const handleSingleTextChange = useCallback((e) => {
-    handleTextChange(0, e.target.value, false);
-  }, [handleTextChange]);
 
   const handleSingleMediaUpload = useCallback((e) => {
     handleMediaUpload(0, e.target.files[0]);
@@ -142,7 +152,7 @@ export function ComposePost({ onSubmit }) {
                   key={`post-${index}`}
                   post={post}
                   index={index}
-                  onTextChange={handleThreadTextChange}
+                  onTextChange={handleTextChange}
                   onMediaUpload={handleMediaUpload}
                   onMediaRemove={removeMedia}
                   onRemove={posts.length > 1 ? removeThread : undefined}
@@ -157,8 +167,8 @@ export function ComposePost({ onSubmit }) {
       ) : (
         <div className="sm:px-4 -mx-4 sm:mx-0">
           <textarea
-            value={getCombinedText}
-            onChange={handleSingleTextChange}
+            value={posts[0].text}
+            onChange={(e) => handleTextChange(0, e.target.value)}
             placeholder="What's happening?"
             maxLength={280 * posts.length} // Allow for multiple tweets worth in single mode
             className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"

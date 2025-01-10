@@ -8,22 +8,24 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
   const getCombinedText = useMemo(() => {
     return posts
       .map((p, i) => {
-        let text = p.text.trim();
+        let text = p.text;
         // Only add [IMAGE] placeholder if post has media and it's not already there
         if (p.mediaId && i > 0 && !text.includes(IMAGE_PLACEHOLDER)) {
           text = `${IMAGE_PLACEHOLDER}\n${text}`;
         }
         return text;
       })
-      .filter(t => t)
-      .join("\n---\n");
+      .filter(t => t !== null && t !== undefined && t !== '')
+      .join("\n---\n")
+      .trim(); // Used when converting from thread mode to single mode
   }, [posts]);
 
   // Split text into posts while properly handling [IMAGE] placeholders
   const splitTextIntoPosts = useCallback((combinedText) => {
+    // Only split on "---" when it's surrounded by newlines
     const parts = combinedText
-      .split("---")
-      .map(t => t.trim())
+      .split(/\n---\n/)
+      .map(t => t.trim()) // Trim each part to remove extra newlines
       .filter(t => t);
 
     // Create new posts array
@@ -36,9 +38,8 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
         ? text.replace(`${IMAGE_PLACEHOLDER}\n`, '').replace(IMAGE_PLACEHOLDER, '').trim()
         : text;
 
-      // If this index existed in original posts and had media, keep its media
-      // only if the exact [IMAGE] placeholder is present
-      if (index < posts.length && posts[index].mediaId && hasImagePlaceholder) {
+      // Always preserve media from original posts if available
+      if (index < posts.length) {
         return {
           text: cleanText,
           mediaId: posts[index].mediaId,
@@ -48,6 +49,19 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
 
       return { text: cleanText, mediaId: null, mediaPreview: null };
     });
+
+    // If we have fewer parts than original posts, preserve remaining posts' media
+    if (parts.length < posts.length) {
+      for (let i = parts.length; i < posts.length; i++) {
+        if (posts[i].mediaId) {
+          newPosts.push({
+            text: "",
+            mediaId: posts[i].mediaId,
+            mediaPreview: posts[i].mediaPreview
+          });
+        }
+      }
+    }
 
     return newPosts.length > 0 ? newPosts : [{ text: "", mediaId: null, mediaPreview: null }];
   }, [posts]);
@@ -60,21 +74,43 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
     [saveAutoSave]
   );
 
-  // Handle text changes in both modes
-  const handleTextChange = useCallback((index, value, isThreadMode) => {
-    if (isThreadMode) {
-      setPosts(currentPosts => {
-        const newPosts = [...currentPosts];
-        newPosts[index] = { ...newPosts[index], text: value };
-        debouncedAutoSave(newPosts);
-        return newPosts;
-      });
-    } else {
-      const newPosts = splitTextIntoPosts(value);
+  // Handle text changes
+  const handleTextChange = useCallback((index, value) => {
+    setPosts(currentPosts => {
+      const newPosts = [...currentPosts];
+      newPosts[index] = { ...newPosts[index], text: value };
+      debouncedAutoSave(newPosts);
+      return newPosts;
+    });
+  }, [setPosts, debouncedAutoSave]);
+
+  // Convert between modes
+  const convertToThread = useCallback((singleText) => {
+    // Only split if there's a "---" surrounded by newlines
+    if (singleText.includes("\n---\n")) {
+      const newPosts = splitTextIntoPosts(singleText);
       setPosts(newPosts);
       debouncedAutoSave(newPosts);
+    } else {
+      // If no splits, preserve the current post with its media
+      setPosts([{ ...posts[0] }]);
     }
-  }, [setPosts, splitTextIntoPosts, debouncedAutoSave]);
+  }, [splitTextIntoPosts, setPosts, debouncedAutoSave, posts]);
+
+  const convertToSingle = useCallback(() => {
+    // Preserve all media from the first post
+    const firstPost = posts[0];
+    setPosts([{ 
+      text: getCombinedText,
+      mediaId: firstPost.mediaId,
+      mediaPreview: firstPost.mediaPreview
+    }]);
+    debouncedAutoSave([{ 
+      text: getCombinedText,
+      mediaId: firstPost.mediaId,
+      mediaPreview: firstPost.mediaPreview
+    }]);
+  }, [getCombinedText, posts, setPosts]);
 
   // Thread management functions
   const addThread = useCallback(() => {
@@ -100,10 +136,12 @@ export function usePostManagement(posts, setPosts, saveAutoSave) {
   }, [debouncedAutoSave]);
 
   return {
-    getCombinedText,
     handleTextChange,
     addThread,
     removeThread,
-    cleanup
+    cleanup,
+    convertToThread,
+    convertToSingle,
+    getCombinedText
   };
 }
