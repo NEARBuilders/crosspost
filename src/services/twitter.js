@@ -4,55 +4,42 @@ import { TwitterApi } from "twitter-api-v2";
 // which manages API credentials and handles OAuth communciation with Twitter
 
 export class TwitterService {
-  constructor(clientId, clientSecret, apiKey, apiSecret) {
-    if (!clientId || !clientSecret || !apiKey || !apiSecret) {
-      throw new Error("Twitter API credentials are required");
+  constructor(clientId, clientSecret) {
+    if (!clientId || !clientSecret) {
+      throw new Error("Twitter OAuth 2.0 credentials are required");
     }
     this.client = new TwitterApi({
       clientId: clientId,
       clientSecret: clientSecret,
-      appKey: apiKey,
-      appSecret: apiSecret,
     });
-    this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
   }
 
   static async initialize() {
     const clientId = process.env.TWITTER_CLIENT_ID;
     const clientSecret = process.env.TWITTER_CLIENT_SECRET;
-    const apiKey = process.env.TWITTER_API_KEY;
-    const apiSecret = process.env.TWITTER_API_SECRET;
 
-    return new TwitterService(clientId, clientSecret, apiKey, apiSecret);
+    return new TwitterService(clientId, clientSecret);
   }
 
   async getAuthLink(callbackUrl) {
-    const { url, oauth_token, oauth_token_secret } =
-      await this.client.generateAuthLink(callbackUrl, {
-        scope: ["tweet.read", "tweet.write", "users.read"],
-      });
-    return { url, oauth_token, oauth_token_secret };
+    // Use OAuth 2.0 with PKCE for more granular scope control
+    const { url, codeVerifier, state } = this.client.generateOAuth2AuthLink(
+      callbackUrl,
+      { scope: ["tweet.read", "tweet.write", "users.read"] },
+    );
+    return { url, codeVerifier, state };
   }
 
-  async handleCallback(oauthToken, oauthVerifier, oauthTokenSecret) {
-    const tempClient = new TwitterApi({
-      appKey: this.apiKey,
-      appSecret: this.apiSecret,
-      accessToken: oauthToken,
-      accessSecret: oauthTokenSecret,
+  async handleCallback(code, codeVerifier, state) {
+    return this.client.loginWithOAuth2({
+      code,
+      codeVerifier,
+      redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/twitter/callback`,
     });
-
-    return tempClient.login(oauthVerifier);
   }
 
-  async tweet(accessToken, accessSecret, posts) {
-    const userClient = new TwitterApi({
-      appKey: this.apiKey,
-      appSecret: this.apiSecret,
-      accessToken,
-      accessSecret,
-    });
+  async tweet(accessToken, posts) {
+    const userClient = new TwitterApi(accessToken);
 
     // Handle array of post objects
     if (!Array.isArray(posts)) {
@@ -81,13 +68,8 @@ export class TwitterService {
     }
   }
 
-  async getUserInfo(accessToken, accessSecret) {
-    const userClient = new TwitterApi({
-      appKey: this.apiKey,
-      appSecret: this.apiSecret,
-      accessToken,
-      accessSecret,
-    });
+  async getUserInfo(accessToken) {
+    const userClient = new TwitterApi(accessToken);
 
     const me = await userClient.v2.me();
     return me.data;

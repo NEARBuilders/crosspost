@@ -20,7 +20,7 @@ export function ConnectToTwitterButton() {
   }, [isConnected, connect, disconnect]);
 
   return (
-    <Button onClick={handleClick} disabled={true}>
+    <Button onClick={handleClick} disabled={false}>
       <Twitter size={18} />
       {isConnecting
         ? "Connecting..."
