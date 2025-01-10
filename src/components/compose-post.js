@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDraftsStore } from "../store/drafts-store";
 import { DraftsModal } from "./drafts-modal";
 import { Button } from "./ui/button";
@@ -14,84 +14,11 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
-function SortablePost({ post, index, onTextChange, onRemove }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: `post-${index}` });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} className="flex gap-2 sm:px-4 -mx-4 sm:mx-0">
-      <div className="flex-none w-8">
-        <div
-          {...attributes}
-          {...listeners}
-          className="sticky top-0 h-[150px] w-8 flex items-center justify-center cursor-grab bg-gray-50 rounded-lg border-2 border-gray-800 shadow-[2px_2px_0_rgba(0,0,0,1)]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="9" cy="5" r="1" />
-            <circle cx="9" cy="12" r="1" />
-            <circle cx="9" cy="19" r="1" />
-            <circle cx="15" cy="5" r="1" />
-            <circle cx="15" cy="12" r="1" />
-            <circle cx="15" cy="19" r="1" />
-          </svg>
-        </div>
-      </div>
-      <div className="flex-1">
-        <textarea
-          value={post.text}
-          onChange={(e) => onTextChange(index, e.target.value)}
-          placeholder={`Thread part ${index + 1}`}
-          maxLength={280}
-          className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
-        />
-        <div className="flex justify-between items-center mt-1">
-          <span className="text-sm text-gray-500">
-            {post.text.length}/280 characters
-          </span>
-          {onRemove && (
-            <Button
-              onClick={() => onRemove(index)}
-              variant="destructive"
-              size="sm"
-            >
-              Remove
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// This "widget" handles all of the editing for post content
-// Calls "onSubmit" with an array of post objects
+import { SortablePost } from "./sortable-post";
+import { usePostMedia } from "../hooks/use-post-media";
+import { usePostManagement } from "../hooks/use-post-management";
 
 export function ComposePost({ onSubmit }) {
   const sensors = useSensors(
@@ -102,73 +29,76 @@ export function ComposePost({ onSubmit }) {
   );
 
   const [isThreadMode, setIsThreadMode] = useState(false);
-  const [posts, setPosts] = useState([{ text: "", image: null }]);
+  const [posts, setPosts] = useState([{ text: "", mediaId: null, mediaPreview: null }]);
   const [error, setError] = useState("");
   const { setModalOpen, saveDraft, saveAutoSave, clearAutoSave, autosave } =
     useDraftsStore();
 
-  // Load auto-saved content on mount
+  // Memoized draft save handler
+  const handleSaveDraft = useCallback(() => {
+    saveDraft(posts);
+  }, [saveDraft, posts]);
+
+  // Load auto-saved content on mount and handle cleanup
   useEffect(() => {
     if (autosave?.posts?.length > 0) {
       setPosts(autosave.posts);
       setIsThreadMode(autosave.posts.length > 1);
     }
-  }, []);
-
-  // Auto-save every 5 seconds if content has changed
-  useEffect(() => {
-    const timer = setInterval(() => {
-      saveAutoSave(posts);
-    }, 5000);
 
     return () => {
-      clearInterval(timer);
-      saveAutoSave(posts);
+      cleanupMediaPreviews();
+      cleanup();
     };
-  }, [posts, saveAutoSave]);
+  }, [autosave, cleanupMediaPreviews, cleanup]);
 
-  const handleTextChange = (index, value) => {
-    const newPosts = [...posts];
-    newPosts[index] = { ...newPosts[index], text: value };
-    setPosts(newPosts);
-  };
+  // Custom hooks
+  const { handleMediaUpload, removeMedia, cleanupMediaPreviews } = usePostMedia(setPosts, setError);
+  const { getCombinedText, handleTextChange, addThread, removeThread, cleanup } = usePostManagement(
+    posts, 
+    setPosts, 
+    saveAutoSave
+  );
 
-  const addThread = () => {
-    setPosts([...posts, { text: "", image: null }]);
-  };
+  // Memoized handlers
+  const handleModalOpen = useCallback(() => {
+    setModalOpen(true);
+  }, [setModalOpen]);
 
-  const removeThread = (index) => {
-    if (posts.length > 1) {
-      const newPosts = posts.filter((_, i) => i !== index);
-      setPosts(newPosts);
+  const handleModeToggle = useCallback(() => {
+    setIsThreadMode(prev => !prev);
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = parseInt(active.id.split("-")[1]);
+      const newIndex = parseInt(over.id.split("-")[1]);
+      setPosts((posts) => arrayMove(posts, oldIndex, newIndex));
     }
-  };
+  }, []);
 
-  const toggleMode = () => {
-    setIsThreadMode(!isThreadMode);
-    if (!isThreadMode) {
-      // Converting single post to multiple
-      const text = posts[0].text;
-      // Only split if there's actual content and it contains ---
-      if (text.trim() && text.includes("---")) {
-        const threads = text
-          .split("---")
-          .map((t) => t.trim())
-          .filter((t) => t)
-          .map((text) => ({ text, image: null }));
-        setPosts(threads.length > 0 ? threads : [{ text: "", image: null }]);
-      }
-    } else {
-      // Converting multiple posts to single
-      const combinedText = posts
-        .map((p) => p.text)
-        .filter((t) => t.trim())
-        .join("\n---\n");
-      setPosts([{ text: combinedText, image: null }]);
-    }
-  };
+  const handleMediaInputClick = useCallback(() => {
+    document.getElementById('media-upload-single').click();
+  }, []);
 
-  const handleSubmit = async () => {
+  const handleThreadTextChange = useCallback((index, value) => {
+    handleTextChange(index, value, true);
+  }, [handleTextChange]);
+
+  const handleSingleTextChange = useCallback((e) => {
+    handleTextChange(0, e.target.value, false);
+  }, [handleTextChange]);
+
+  const handleSingleMediaUpload = useCallback((e) => {
+    handleMediaUpload(0, e.target.files[0]);
+  }, [handleMediaUpload]);
+
+  const handleSingleMediaRemove = useCallback(() => {
+    removeMedia(0);
+  }, [removeMedia]);
+
+  const handleSubmit = useCallback(async () => {
     const nonEmptyPosts = posts.filter((p) => p.text.trim());
     if (nonEmptyPosts.length === 0) {
       setError("Please enter your post text");
@@ -176,24 +106,22 @@ export function ComposePost({ onSubmit }) {
     }
     try {
       setError("");
-      // If not in thread mode, just submit the first post's content
-      const finalPosts = isThreadMode ? nonEmptyPosts : [posts[0]];
-      await onSubmit(finalPosts);
-      setPosts([{ text: "", image: null }]);
+      await onSubmit(nonEmptyPosts);
+      setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
       clearAutoSave();
     } catch (err) {
       setError("Failed to send post");
       console.error("Post error:", err);
     }
-  };
+  }, [clearAutoSave, onSubmit, posts, setError]);
 
   return (
     <div className="space-y-3">
       <div className="flex justify-end gap-2 mb-2">
-        <Button onClick={() => setModalOpen(true)} size="sm">
+        <Button onClick={handleModalOpen} size="sm">
           Drafts
         </Button>
-        <Button onClick={toggleMode} size="sm">
+        <Button onClick={handleModeToggle} size="sm">
           {isThreadMode ? "Single Post Mode" : "Thread Mode"}
         </Button>
       </div>
@@ -203,14 +131,7 @@ export function ComposePost({ onSubmit }) {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            onDragEnd={(event) => {
-              const { active, over } = event;
-              if (over && active.id !== over.id) {
-                const oldIndex = parseInt(active.id.split("-")[1]);
-                const newIndex = parseInt(over.id.split("-")[1]);
-                setPosts((posts) => arrayMove(posts, oldIndex, newIndex));
-              }
-            }}
+            onDragEnd={handleDragEnd}
           >
             <SortableContext
               items={posts.map((_, i) => `post-${i}`)}
@@ -221,8 +142,10 @@ export function ComposePost({ onSubmit }) {
                   key={`post-${index}`}
                   post={post}
                   index={index}
-                  onTextChange={handleTextChange}
-                  onRemove={isThreadMode && posts.length > 1 ? removeThread : undefined}
+                  onTextChange={handleThreadTextChange}
+                  onMediaUpload={handleMediaUpload}
+                  onMediaRemove={removeMedia}
+                  onRemove={posts.length > 1 ? removeThread : undefined}
                 />
               ))}
             </SortableContext>
@@ -234,13 +157,48 @@ export function ComposePost({ onSubmit }) {
       ) : (
         <div className="sm:px-4 -mx-4 sm:mx-0">
           <textarea
-            value={posts[0].text}
-            onChange={(e) => handleTextChange(0, e.target.value)}
+            value={getCombinedText}
+            onChange={handleSingleTextChange}
             placeholder="What's happening?"
-            maxLength={280 * 10} // Allow for multiple tweets worth in single mode
+            maxLength={280 * posts.length} // Allow for multiple tweets worth in single mode
             className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
           />
-          {/* Future image upload UI would go here */}
+          <div className="mt-2">
+            <input
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleSingleMediaUpload}
+              className="hidden"
+              id="media-upload-single"
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleMediaInputClick}
+                size="sm"
+                variant="outline"
+                disabled={posts[0].mediaId !== null}
+              >
+                Add Media
+              </Button>
+              {posts[0].mediaPreview && (
+                <div className="relative">
+                  <img 
+                    src={posts[0].mediaPreview} 
+                    alt="Preview" 
+                    className="h-10 w-10 object-cover rounded"
+                  />
+                  <Button
+                    onClick={handleSingleMediaRemove}
+                    size="sm"
+                    variant="destructive"
+                    className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
+                  >
+                    ×
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -252,7 +210,7 @@ export function ComposePost({ onSubmit }) {
         </span>
         <div className="flex gap-2">
           <Button
-            onClick={() => saveDraft(posts)}
+            onClick={handleSaveDraft}
             disabled={posts.every((p) => !p.text.trim())}
           >
             Save Draft

@@ -1,4 +1,5 @@
 import { TwitterApi } from "twitter-api-v2";
+import fs from "fs";
 
 // This service is used in the Next.js server context,
 // which manages API credentials and handles OAuth communciation with Twitter
@@ -15,14 +16,22 @@ export class TwitterService {
       clientSecret: credentials.clientSecret,
     });
 
-    // OAuth 1.0a client for user operations if credentials are provided
+    // OAuth 1.0a client for user operations and media uploads if credentials are provided
     if (credentials.apiKey && credentials.apiSecret && credentials.accessToken && credentials.accessSecret) {
-      this.oauth1Client = new TwitterApi({
-        appKey: credentials.apiKey,
-        appSecret: credentials.apiSecret,
-        accessToken: credentials.accessToken,
-        accessSecret: credentials.accessSecret,
-      });
+      try {
+        this.oauth1Client = new TwitterApi({
+          appKey: credentials.apiKey,
+          appSecret: credentials.apiSecret,
+          accessToken: credentials.accessToken,
+          accessSecret: credentials.accessSecret,
+        });
+        console.log("OAuth 1.0a client initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize OAuth 1.0a client:", error);
+        this.oauth1Client = null;
+      }
+    } else {
+      console.warn("Missing OAuth 1.0a credentials - media uploads will not work");
     }
   }
 
@@ -56,6 +65,26 @@ export class TwitterService {
     });
   }
 
+  async uploadMedia(mediaPath, mimeType) {
+    if (!this.oauth1Client) {
+      throw new Error("OAuth 1.0a credentials are required for media uploads");
+    }
+
+    try {
+      // Read the file into a buffer
+      const buffer = await fs.promises.readFile(mediaPath);
+      
+      // For media uploads, we use the app-only OAuth 1.0a client
+      // The user's OAuth 2.0 access token is not used for media uploads
+      const mediaId = await this.oauth1Client.v1.uploadMedia(buffer, { mimeType });
+      console.log("Media upload successful, mediaId:", mediaId);
+      return mediaId;
+    } catch (error) {
+      console.error("Media upload error details:", error);
+      throw error;
+    }
+  }
+
   async tweet(accessToken, posts) {
     // Create OAuth 2.0 client with user access token for tweet operations
     const userClient = new TwitterApi(accessToken);
@@ -66,17 +95,26 @@ export class TwitterService {
     }
 
     if (posts.length === 1) {
-      // Single tweet
-      return userClient.v2.tweet(posts[0].text);
+      const post = posts[0];
+      const tweetData = { text: post.text };
+      
+      // Add media if present
+      if (post.mediaId) {
+        tweetData.media = { media_ids: post.mediaId };
+      }
+      
+      return userClient.v2.tweet(tweetData);
     } else {
       // Thread implementation
       let lastTweetId = null;
       const responses = [];
 
       for (const post of posts) {
-        const tweetData = lastTweetId
-          ? { text: post.text, reply: { in_reply_to_tweet_id: lastTweetId } }
-          : { text: post.text };
+        const tweetData = {
+          text: post.text,
+          ...(lastTweetId && { reply: { in_reply_to_tweet_id: lastTweetId } }),
+          ...(post.mediaId && { media: { media_ids: post.mediaId } })
+        };
 
         const response = await userClient.v2.tweet(tweetData);
         responses.push(response);

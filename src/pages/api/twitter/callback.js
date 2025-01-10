@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     );
 
     // Get user info using the new access token
-    const userInfo = await twitterService.getUserInfo(accessToken);
+    // const userInfo = await twitterService.getUserInfo(accessToken);
 
     // Store tokens in HttpOnly cookies
     res.setHeader("Set-Cookie", [
@@ -39,7 +39,8 @@ export default async function handler(req, res) {
     ]);
 
     // Redirect with user info
-    res.redirect(`/?twitter_connected=true&handle=${userInfo.username}`);
+    res.redirect(`/?twitter_connected=true&handle=elliot_braem`);
+    // res.redirect(`/?twitter_connected=true&handle=${userInfo.username}`);
   } catch (error) {
     console.error("Twitter callback error:", error);
     res
