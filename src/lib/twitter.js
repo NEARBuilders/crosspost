@@ -9,8 +9,7 @@ export function getTwitterTokens() {
   }, {});
 
   return {
-    accessToken: cookies.twitter_access_token,
-    accessSecret: cookies.twitter_access_secret,
+    accessToken: cookies.twitter_access_token
   };
 }
 

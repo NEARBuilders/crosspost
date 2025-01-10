@@ -17,18 +17,13 @@ export default async function handler(req, res) {
 
   const cookies = parse(req.headers.cookie || "");
   const accessToken = cookies.twitter_access_token;
-  const accessSecret = cookies.twitter_access_secret;
-  if (!accessToken || !accessSecret) {
+  if (!accessToken) {
     return res.status(401).json({ error: "Not authenticated with Twitter" });
   }
 
   try {
     const twitterService = await TwitterService.initialize();
-    const response = await twitterService.tweet(
-      accessToken,
-      accessSecret,
-      posts,
-    );
+    const response = await twitterService.tweet(accessToken, posts);
     res.status(200).json({
       success: true,
       data: Array.isArray(response) ? response : [response],
