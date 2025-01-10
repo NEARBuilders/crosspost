@@ -56,7 +56,7 @@ export function TwitterApiNotice() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    donate
+                    please donate
                   </a>
                 </Button>
                 <Button disabled>buy $XPOST</Button>
