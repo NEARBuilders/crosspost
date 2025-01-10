@@ -1,10 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { useDraftsStore } from "../store/drafts-store";
-import { DraftsModal } from "./drafts-modal";
-import { Button } from "./ui/button";
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -16,29 +12,39 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SortablePost } from "./sortable-post";
-import { usePostMedia } from "../hooks/use-post-media";
+import { useCallback, useEffect, useState } from "react";
 import { usePostManagement } from "../hooks/use-post-management";
+import { usePostMedia } from "../hooks/use-post-media";
+import { useDraftsStore } from "../store/drafts-store";
+import { DraftsModal } from "./drafts-modal";
+import { SortablePost } from "./sortable-post";
+import { Button } from "./ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "./ui/tooltip";
 
 export function ComposePost({ onSubmit }) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const [posts, setPosts] = useState([{ text: "", mediaId: null, mediaPreview: null }]);
   const [error, setError] = useState("");
-  const { 
-    setModalOpen, 
-    saveDraft, 
-    saveAutoSave, 
-    clearAutoSave, 
+  const {
+    setModalOpen,
+    saveDraft,
+    saveAutoSave,
+    clearAutoSave,
     autosave,
     isThreadMode,
     setThreadMode,
-    isModalOpen
+    isModalOpen,
   } = useDraftsStore();
 
   // Memoized draft save handler
@@ -47,19 +53,19 @@ export function ComposePost({ onSubmit }) {
   }, [saveDraft, posts]);
 
   // Custom hooks
-  const { handleMediaUpload, removeMedia, cleanupMediaPreviews, recreateMediaPreviews } = usePostMedia(setPosts, setError, saveAutoSave);
-  const { 
-    handleTextChange, 
-    addThread, 
-    removeThread, 
+  const { handleMediaUpload, removeMedia } = usePostMedia(
+    setPosts,
+    setError,
+    saveAutoSave,
+  );
+  const {
+    handleTextChange,
+    addThread,
+    removeThread,
     cleanup,
     convertToThread,
-    convertToSingle
-  } = usePostManagement(
-    posts, 
-    setPosts, 
-    saveAutoSave
-  );
+    convertToSingle,
+  } = usePostManagement(posts, setPosts, saveAutoSave);
 
   // Load auto-saved content on mount and handle cleanup
   useEffect(() => {
@@ -68,17 +74,24 @@ export function ComposePost({ onSubmit }) {
     }
 
     return () => {
-      if (cleanupMediaPreviews) cleanupMediaPreviews();
       if (cleanup) cleanup();
     };
-  }, [autosave, cleanupMediaPreviews, cleanup]);
+  }, [autosave, cleanup]);
 
   // Memoized handlers
   const handleModalOpen = useCallback(() => {
     setModalOpen(true);
   }, [setModalOpen]);
 
+  const hasMultipleImages = useCallback(() => {
+    return posts.filter(post => post.mediaId !== null).length > 1;
+  }, [posts]);
+
   const handleModeToggle = useCallback(() => {
+    if (isThreadMode && hasMultipleImages()) {
+      return; // Prevent switching to single post mode with multiple images
+    }
+
     if (isThreadMode) {
       convertToSingle();
       setThreadMode(false);
@@ -88,14 +101,13 @@ export function ComposePost({ onSubmit }) {
     }
     // Recreate previews and save after mode switch
     setTimeout(() => {
-      recreateMediaPreviews();
       // Use latest posts state when saving
       setPosts(currentPosts => {
         saveAutoSave(currentPosts);
         return currentPosts;
       });
     }, 0);
-  }, [isThreadMode, convertToSingle, convertToThread, posts, setThreadMode, recreateMediaPreviews, saveAutoSave]);
+  }, [isThreadMode, hasMultipleImages, convertToSingle, convertToThread, posts, setThreadMode, saveAutoSave]);
 
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
@@ -107,12 +119,15 @@ export function ComposePost({ onSubmit }) {
   }, []);
 
   const handleMediaInputClick = useCallback(() => {
-    document.getElementById('media-upload-single').click();
+    document.getElementById("media-upload-single").click();
   }, []);
 
-  const handleSingleMediaUpload = useCallback((e) => {
-    handleMediaUpload(0, e.target.files[0]);
-  }, [handleMediaUpload]);
+  const handleSingleMediaUpload = useCallback(
+    (e) => {
+      handleMediaUpload(0, e.target.files[0]);
+    },
+    [handleMediaUpload],
+  );
 
   const handleSingleMediaRemove = useCallback(() => {
     removeMedia(0);
@@ -141,9 +156,26 @@ export function ComposePost({ onSubmit }) {
         <Button onClick={handleModalOpen} size="sm">
           Drafts
         </Button>
-        <Button onClick={handleModeToggle} size="sm">
-          {isThreadMode ? "Single Post Mode" : "Thread Mode"}
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Button 
+                  onClick={handleModeToggle} 
+                  size="sm"
+                  disabled={isThreadMode && hasMultipleImages()}
+                >
+                  {isThreadMode ? "Single Post Mode" : "Thread Mode"}
+                </Button>
+              </div>
+            </TooltipTrigger>
+            {isThreadMode && hasMultipleImages() && (
+              <TooltipContent>
+                <p>Cannot switch while multiple images exist</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {isThreadMode ? (
@@ -202,9 +234,9 @@ export function ComposePost({ onSubmit }) {
               </Button>
               {posts[0].mediaPreview && (
                 <div className="relative">
-                  <img 
-                    src={posts[0].mediaPreview} 
-                    alt="Preview" 
+                  <img
+                    src={posts[0].mediaPreview}
+                    alt="Preview"
                     className="h-10 w-10 object-cover rounded"
                   />
                   <Button

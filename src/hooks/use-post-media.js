@@ -60,11 +60,6 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
   const removeMedia = useCallback((index) => {
     setPosts(posts => {
       const newPosts = [...posts];
-      if (newPosts[index].mediaPreview) {
-        if (newPosts[index].mediaPreview.startsWith('blob:')) {
-          URL.revokeObjectURL(newPosts[index].mediaPreview);
-        }
-      }
       newPosts[index] = { 
         ...newPosts[index], 
         mediaId: null, 
@@ -75,25 +70,5 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
     });
   }, [setPosts, saveAutoSave]);
 
-  // Recreate preview URLs if needed
-  const recreateMediaPreviews = useCallback(() => {
-    // Since we're not storing base64 data anymore, this is mainly for cleanup
-    setPosts(posts => {
-      return [...posts]; // Trigger re-render while preserving existing previews
-    });
-  }, [setPosts]);
-
-  // Cleanup function for object URLs
-  const cleanupMediaPreviews = useCallback(() => {
-    setPosts(posts => {
-      posts.forEach(post => {
-        if (post.mediaPreview && post.mediaPreview.startsWith('blob:')) {
-          URL.revokeObjectURL(post.mediaPreview);
-        }
-      });
-      return posts;
-    });
-  }, [setPosts]);
-
-  return { handleMediaUpload, removeMedia, cleanupMediaPreviews, recreateMediaPreviews };
+  return { handleMediaUpload, removeMedia };
 }
