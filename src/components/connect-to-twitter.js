@@ -1,15 +1,11 @@
-import { useCallback, useEffect } from "react";
-import { useTwitterConnection } from "../store/twitter-store";
 import { Twitter } from "lucide-react";
+import { useCallback } from "react";
+import { useTwitterConnection } from "../store/twitter-store";
 import { Button } from "./ui/button";
 
 export function ConnectToTwitterButton() {
-  const { isConnected, isConnecting, connect, disconnect, checkConnection } =
+  const { isConnected, isConnecting, connect, disconnect } =
     useTwitterConnection();
-
-  useEffect(() => {
-    checkConnection();
-  }, []); // Check connection when button loads
 
   const handleClick = useCallback(() => {
     if (isConnected) {
@@ -20,7 +16,7 @@ export function ConnectToTwitterButton() {
   }, [isConnected, connect, disconnect]);
 
   return (
-    <Button onClick={handleClick} disabled={true}>
+    <Button onClick={handleClick} disabled={false}>
       <Twitter size={18} />
       {isConnecting
         ? "Connecting..."

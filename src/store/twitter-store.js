@@ -12,6 +12,19 @@ const store = (set, get) => ({
   handle: null,
   error: null,
   post: tweet,
+  init: () => {
+    if (typeof window === 'undefined') return;
+    
+    const params = new URLSearchParams(window.location.search);
+    const isConnected = params.get('twitter_connected') === 'true';
+    const handle = params.get('handle');
+    
+    if (isConnected && handle) {
+      set({ isConnected: true, handle, isConnecting: false });
+      // Clean URL
+      window.history.replaceState({}, '', '/');
+    }
+  },
   checkConnection: async () => {
     const { isConnected, handle } = await status();
     set({ isConnected, handle });
@@ -34,6 +47,11 @@ const store = (set, get) => ({
 });
 
 export const useTwitterStore = create(store);
+
+// Initialize store
+if (typeof window !== 'undefined') {
+  useTwitterStore.getState().init();
+}
 
 // Focused hooks
 export const useTwitterConnection = () => {

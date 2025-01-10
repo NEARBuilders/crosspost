@@ -75,13 +75,15 @@ function SortablePost({ post, index, onTextChange, onRemove }) {
           <span className="text-sm text-gray-500">
             {post.text.length}/280 characters
           </span>
-          <Button
-            onClick={() => onRemove(index)}
-          variant="destructive"
-          size="sm"
-          >
-            Remove
-          </Button>
+          {onRemove && (
+            <Button
+              onClick={() => onRemove(index)}
+              variant="destructive"
+              size="sm"
+            >
+              Remove
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -220,7 +222,7 @@ export function ComposePost({ onSubmit }) {
                   post={post}
                   index={index}
                   onTextChange={handleTextChange}
-                  onRemove={posts.length > 1 ? removeThread : undefined}
+                  onRemove={isThreadMode && posts.length > 1 ? removeThread : undefined}
                 />
               ))}
             </SortableContext>

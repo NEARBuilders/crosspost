@@ -27,6 +27,9 @@ export default async function handler(req, res) {
       state,
     );
 
+    // Get user info using the new access token
+    const userInfo = await twitterService.getUserInfo(accessToken);
+
     // Store tokens in HttpOnly cookies
     res.setHeader("Set-Cookie", [
       `twitter_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
@@ -35,8 +38,8 @@ export default async function handler(req, res) {
       "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
     ]);
 
-    // Clean redirect since we're using Zustand store
-    res.redirect("/");
+    // Redirect with user info
+    res.redirect(`/?twitter_connected=true&handle=${userInfo.username}`);
   } catch (error) {
     console.error("Twitter callback error:", error);
     res
