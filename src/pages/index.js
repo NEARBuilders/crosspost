@@ -40,13 +40,15 @@ export default function Home() {
             Connect your NEAR wallet to start posting
           </p>
         </div>
-      ) : !isConnected ? (
-        <div className="text-center py-12">
-          <p className="text-lg text-gray-600">
-            Connect Twitter to start posting
-          </p>
-        </div>
       ) : (
+        // : !isConnected ? (
+        //   <div className="text-center py-12">
+        //     <p className="text-lg text-gray-600">
+        //       Connect Twitter to start posting
+        //     </p>
+        //   </div>
+        // )
+
         <ComposePost onSubmit={post} />
       )}
     </main>

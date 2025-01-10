@@ -41,13 +41,13 @@ export function TwitterApiNotice() {
           <div className="p-6">
             <DialogHeader className="text-left">
               <DialogTitle className="font-mono text-xl font-semibold">
-                We've been ratelimited.
+                We&apos;ve been ratelimited.
               </DialogTitle>
               <DialogDescription className="text-gray-600">
                 We exceeded our ration of 17 tweets per 24 hours... so while we
                 wait until{" "}
                 {format(new Date(1736524953 * 1000), "h:mm a 'on' MMM d, yyyy")}
-                , we're raising funds to pay the absurd $200/month API fee.
+                , we&apos;re raising funds to pay the absurd $200/month API fee.
               </DialogDescription>
               <div className="pt-2 flex gap-4">
                 <Button asChild>
@@ -56,7 +56,7 @@ export function TwitterApiNotice() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    please donate
+                    donate
                   </a>
                 </Button>
                 <Button disabled>buy $XPOST</Button>
