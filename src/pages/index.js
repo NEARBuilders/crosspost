@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <main className="p-6">
-      <TwitterApiNotice />
+      <TwitterApiNotice post={post} />
       {/* MAIN CONTENT */}
 
       {!signedAccountId ? (

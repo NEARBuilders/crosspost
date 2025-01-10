@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ReactConfetti from "react-confetti";
 import {
   Dialog,
   DialogContent,
@@ -9,29 +10,48 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ModalWindowControls } from "./modal-window-controls";
-import { format } from "date-fns";
 
-export function TwitterApiNotice() {
+import { useTwitterConnection } from "../store/twitter-store";
+
+export function TwitterApiNotice({ post }) {
   const [open, setOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(true);
+  const [hasShown, setHasShown] = useState(false);
+  const { isConnected } = useTwitterConnection();
 
   useEffect(() => {
-    // Check if user has already seen the notice
-    const hasSeenNotice = localStorage.getItem('hasSeenTwitterApiNotice');
-    
-    if (!hasSeenNotice) {
+    if (isConnected && !hasShown) {
       const timer = setTimeout(() => {
         setOpen(true);
-        // Mark that user has seen the notice
-        localStorage.setItem('hasSeenTwitterApiNotice', 'true');
+        setHasShown(true);
       }, 800);
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isConnected, hasShown]);
+
+  const handleThanks = () => {
+    try {
+      post([{ text: "thanks @David___Mo! we love you 🚀✨💖🎉" }]);
+    } catch (e) {
+      console.error("error posting", e);
+      // I don't care
+    }
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="border-none bg-transparent p-0 shadow-none">
+        {showConfetti && open && (
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={200}
+            onConfettiComplete={() => setShowConfetti(false)}
+          />
+        )}
         <motion.div
           initial={{ opacity: 0, x: 0 }}
           animate={{
@@ -48,25 +68,14 @@ export function TwitterApiNotice() {
           <div className="p-6">
             <DialogHeader className="text-left">
               <DialogTitle className="font-mono text-xl font-semibold">
-                We&apos;ve been ratelimited.
+                We&apos;re back in business!
               </DialogTitle>
               <DialogDescription className="text-gray-600">
-                We exceeded our ration of 17 tweets per 24 hours... so while we
-                wait until{" "}
-                {format(new Date(1736524953 * 1000), "h:mm a 'on' MMM d, yyyy")}
-                , we&apos;re raising funds to pay the absurd $200/month API fee.
+                The incredible David Morrison (davidmo.near) donated 40N to pay
+                the API fee! 🎉
               </DialogDescription>
               <div className="pt-2 flex gap-4">
-                <Button asChild>
-                  <a
-                    href="https://app.potlock.org/?tab=project&projectId=crosspost.near"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    please donate
-                  </a>
-                </Button>
-                <Button disabled>buy $XPOST</Button>
+                <Button onClick={handleThanks}>say thanks!</Button>
               </div>
             </DialogHeader>
           </div>
