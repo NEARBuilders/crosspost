@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useDraftsStore } from "../store/drafts-store";
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "./ui/button";
 
 export function DraftsModal({ onSelect }) {
   const { drafts, isModalOpen, setModalOpen, deleteDraft } = useDraftsStore();
@@ -18,12 +19,14 @@ export function DraftsModal({ onSelect }) {
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Drafts</h2>
-            <button
+            <Button
               onClick={() => setModalOpen(false)}
+              variant="ghost"
+              size="sm"
               className="text-gray-600 hover:text-gray-800"
             >
               ✕
-            </button>
+            </Button>
           </div>
 
           {drafts.length === 0 ? (
@@ -42,21 +45,22 @@ export function DraftsModal({ onSelect }) {
                       })}
                     </span>
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick={() => {
                           onSelect(draft.posts);
                           setModalOpen(false);
                         }}
-                        className="text-sm px-3 py-1 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                        size="sm"
                       >
                         Load
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => deleteDraft(draft.id)}
-                        className="text-sm px-3 py-1 border-2 border-red-600 text-red-600 hover:bg-red-50 shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                        variant="destructive"
+                        size="sm"
                       >
                         Delete
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className="text-sm text-gray-800">

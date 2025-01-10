@@ -2,6 +2,7 @@ import { useNearSocialStore } from "@/store/near-social-store";
 import { NearContext } from "@/wallets/near";
 import { Wallet } from "lucide-react";
 import { useContext, useEffect } from "react";
+import { Button } from "./ui/button";
 
 export function ConnectToNearButton() {
   const { signedAccountId, wallet } = useContext(NearContext);
@@ -29,12 +30,9 @@ export function ConnectToNearButton() {
   };
 
   return (
-    <button
-      onClick={signedAccountId ? handleSignOut : handleSignIn}
-      className="flex items-center gap-2 px-4 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
-    >
+    <Button onClick={signedAccountId ? handleSignOut : handleSignIn}>
       <Wallet size={18} />
       {signedAccountId ? "Disconnect NEAR" : "Connect NEAR"}
-    </button>
+    </Button>
   );
 }

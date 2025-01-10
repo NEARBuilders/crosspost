@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDraftsStore } from "../store/drafts-store";
 import { DraftsModal } from "./drafts-modal";
+import { Button } from "./ui/button";
 
 // This "widget" handles all of the editing for post content
 // Calls "onSubmit" with an array of post objects
@@ -94,18 +95,12 @@ export function ComposePost({ onSubmit }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-end gap-2 mb-2">
-        <button
-          onClick={() => setModalOpen(true)}
-          className="text-sm px-3 py-1 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
-        >
+        <Button onClick={() => setModalOpen(true)} size="sm">
           Drafts
-        </button>
-        <button
-          onClick={toggleMode}
-          className="text-sm px-3 py-1 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)]"
-        >
+        </Button>
+        <Button onClick={toggleMode} size="sm">
           {isThreadMode ? "Single Post Mode" : "Thread Mode"}
-        </button>
+        </Button>
       </div>
 
       {isThreadMode ? (
@@ -124,23 +119,22 @@ export function ComposePost({ onSubmit }) {
                   {post.text.length}/280 characters
                 </span>
                 {posts.length > 1 && (
-                  <button
+                  <Button
                     onClick={() => removeThread(index)}
-                    className="text-red-500 text-sm hover:text-red-700"
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:text-red-700"
                   >
                     Remove
-                  </button>
+                  </Button>
                 )}
               </div>
               {/* Future image upload UI would go here */}
             </div>
           ))}
-          <button
-            onClick={addThread}
-            className="w-full py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] text-sm"
-          >
+          <Button onClick={addThread} className="w-full" size="sm">
             + Add Thread
-          </button>
+          </Button>
         </div>
       ) : (
         <div>
@@ -162,20 +156,18 @@ export function ComposePost({ onSubmit }) {
             : `${posts[0].text.length} characters`}
         </span>
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => saveDraft(posts)}
             disabled={posts.every((p) => !p.text.trim())}
-            className="px-4 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Draft
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSubmit}
             disabled={posts.every((p) => !p.text.trim())}
-            className="flex items-center gap-2 px-6 py-2 border-2 border-gray-800 hover:bg-gray-100 shadow-[2px_2px_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Post
-          </button>
+          </Button>
         </div>
       </div>
 
