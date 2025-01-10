@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDraftsStore } from "../store/drafts-store";
 import { DraftsModal } from "./drafts-modal";
 
@@ -9,7 +9,27 @@ export function ComposePost({ onSubmit }) {
   const [isThreadMode, setIsThreadMode] = useState(false);
   const [posts, setPosts] = useState([{ text: "", image: null }]);
   const [error, setError] = useState("");
-  const { setModalOpen, saveDraft } = useDraftsStore();
+  const { setModalOpen, saveDraft, saveAutoSave, clearAutoSave, autosave } = useDraftsStore();
+
+  // Load auto-saved content on mount
+  useEffect(() => {
+    if (autosave?.posts?.length > 0) {
+      setPosts(autosave.posts);
+      setIsThreadMode(autosave.posts.length > 1);
+    }
+  }, []);
+
+  // Auto-save every 5 seconds if content has changed
+  useEffect(() => {
+    const timer = setInterval(() => {
+      saveAutoSave(posts);
+    }, 5000);
+
+    return () => {
+      clearInterval(timer);
+      saveAutoSave(posts);
+    };
+  }, [posts, saveAutoSave]);
 
   const handleTextChange = (index, value) => {
     const newPosts = [...posts];
@@ -64,6 +84,7 @@ export function ComposePost({ onSubmit }) {
       const finalPosts = isThreadMode ? nonEmptyPosts : [posts[0]];
       await onSubmit(finalPosts);
       setPosts([{ text: "", image: null }]);
+      clearAutoSave();
     } catch (err) {
       setError("Failed to send post");
       console.error("Post error:", err);

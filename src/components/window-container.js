@@ -32,10 +32,10 @@ export const WindowControls = () => {
       {signedAccountId && (
         <div className="mt-4 space-y-1 text-center sm:text-left">
           <p className="text-sm text-gray-600">
-            Connected as: {signedAccountId}
+            NEAR: {signedAccountId}
           </p>
           {isConnected && handle && (
-            <p className="text-sm text-gray-600">Twitter Account: @{handle}</p>
+            <p className="text-sm text-gray-600">Twitter: @{handle}</p>
           )}
         </div>
       )}

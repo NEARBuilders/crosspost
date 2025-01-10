@@ -1,11 +1,12 @@
 import { create } from "zustand";
 
 const STORAGE_KEY = "crosspost_drafts";
+const AUTOSAVE_KEY = "crosspost_autosave";
 
-const loadDrafts = () => {
+const loadDrafts = (key = STORAGE_KEY) => {
   if (typeof window === "undefined") return [];
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [];
   } catch (err) {
     console.error("Failed to load drafts:", err);
@@ -13,10 +14,10 @@ const loadDrafts = () => {
   }
 };
 
-const saveDrafts = (drafts) => {
+const saveDrafts = (drafts, key = STORAGE_KEY) => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(drafts));
+    localStorage.setItem(key, JSON.stringify(drafts));
   } catch (err) {
     console.error("Failed to save drafts:", err);
   }
@@ -24,6 +25,7 @@ const saveDrafts = (drafts) => {
 
 export const useDraftsStore = create((set, get) => ({
   drafts: loadDrafts(),
+  autosave: loadDrafts(AUTOSAVE_KEY),
   isModalOpen: false,
 
   setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
@@ -47,5 +49,26 @@ export const useDraftsStore = create((set, get) => ({
       saveDrafts(newDrafts);
       return { drafts: newDrafts };
     });
+  },
+
+  saveAutoSave: (posts) => {
+    if (posts.every(p => !p.text.trim())) {
+      // If all posts are empty, clear autosave
+      localStorage.removeItem(AUTOSAVE_KEY);
+      set({ autosave: null });
+      return;
+    }
+    
+    const autosave = {
+      posts,
+      updatedAt: new Date().toISOString(),
+    };
+    saveDrafts(autosave, AUTOSAVE_KEY);
+    set({ autosave });
+  },
+
+  clearAutoSave: () => {
+    localStorage.removeItem(AUTOSAVE_KEY);
+    set({ autosave: null });
   },
 }));
