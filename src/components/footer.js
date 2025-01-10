@@ -33,7 +33,7 @@ export function Footer() {
         <div className="flex items-center gap-1 sm:gap-2">
           <span>with ❤️ by</span>
           <a
-            href={"https://github.com/nearbuilders/crosspost"}
+            href={"https://nearbuilders.org"}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center"
