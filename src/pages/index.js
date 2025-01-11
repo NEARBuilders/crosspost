@@ -62,17 +62,6 @@ export default function Home() {
         // )
         <>
           <ComposePost onSubmit={post} />
-          <button
-            onClick={() => {
-              toast({
-                title: "Twitter Connection Error",
-                description: error,
-                variant: "destructive",
-              });
-            }}
-          >
-            click
-          </button>
         </>
       )}
     </main>
