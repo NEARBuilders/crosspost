@@ -4,7 +4,7 @@ import { useTwitterConnection } from "../store/twitter-store";
 import { Button } from "./ui/button";
 
 export function ConnectToTwitterButton() {
-  const { isConnected, isConnecting, connect, disconnect } =
+  const { isConnected, isConnecting, connect, disconnect, handle } =
     useTwitterConnection();
 
   const handleClick = useCallback(() => {
@@ -21,7 +21,7 @@ export function ConnectToTwitterButton() {
       {isConnecting
         ? "Connecting..."
         : isConnected
-          ? "Disconnect Twitter"
+          ? `Disconnect @${handle}`
           : "Connect Twitter"}
     </Button>
   );

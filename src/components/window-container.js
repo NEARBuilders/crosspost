@@ -29,14 +29,6 @@ export const WindowControls = () => {
           {signedAccountId && <ConnectToTwitterButton />}
         </div>
       </div>
-      {signedAccountId && (
-        <div className="mt-4 space-y-1 text-center sm:text-left">
-          <p className="text-sm text-gray-600">NEAR: {signedAccountId}</p>
-          {isConnected && handle && (
-            <p className="text-sm text-gray-600">Twitter: @{handle}</p>
-          )}
-        </div>
-      )}
       {/* <div className="flex items-center justify-end">
         <div
           className="mx-4 my-3 h-4 w-4 cursor-pointer rounded-full bg-black transition-opacity hover:opacity-80"
