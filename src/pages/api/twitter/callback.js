@@ -18,16 +18,22 @@ export default async function handler(req, res) {
 
   // Validate OAuth parameters
   if (!code || !state) {
-    return res.redirect(`/?twitter_error=${encodeURIComponent("Missing authorization code")}`);
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Missing authorization code")}`,
+    );
   }
 
   if (!code_verifier || !oauth_state) {
-    return res.redirect(`/?twitter_error=${encodeURIComponent("Invalid session state")}`);
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Invalid session state")}`,
+    );
   }
 
   // Verify the state parameter to prevent CSRF attacks
   if (state !== oauth_state) {
-    return res.redirect(`/?twitter_error=${encodeURIComponent("Invalid OAuth state")}`);
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Invalid OAuth state")}`,
+    );
   }
 
   try {
@@ -54,7 +60,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Twitter callback error:", error);
     return res.redirect(
-      `/?twitter_error=${encodeURIComponent("Failed to complete Twitter authentication")}`
+      `/?twitter_error=${encodeURIComponent("Failed to complete Twitter authentication")}`,
     );
   }
 }

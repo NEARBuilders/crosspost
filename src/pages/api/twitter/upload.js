@@ -23,23 +23,27 @@ export default async function handler(req, res) {
   try {
     const form = formidable({});
     const [fields, files] = await form.parse(req);
-    
+
     if (!files.media?.[0]) {
       return res.status(400).json({ error: "No media file provided" });
     }
 
     const file = files.media[0];
     const twitterService = await TwitterService.initialize();
-    
+
     if (!twitterService.oauth1Client) {
       console.error("OAuth 1.0a client not initialized - check credentials");
-      return res.status(500).json({ 
-        error: "Server is not configured for media uploads. OAuth 1.0a credentials are missing." 
+      return res.status(500).json({
+        error:
+          "Server is not configured for media uploads. OAuth 1.0a credentials are missing.",
       });
     }
 
     try {
-      const mediaId = await twitterService.uploadMedia(file.filepath, file.mimetype);
+      const mediaId = await twitterService.uploadMedia(
+        file.filepath,
+        file.mimetype,
+      );
       return res.status(200).json({
         success: true,
         mediaId,
@@ -47,7 +51,7 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error("Upload failed:", error);
       return res.status(500).json({
-        error: "Failed to upload media: " + (error.message || "Unknown error")
+        error: "Failed to upload media: " + (error.message || "Unknown error"),
       });
     } finally {
       // Clean up the temporary file
@@ -57,13 +61,21 @@ export default async function handler(req, res) {
         console.error("Failed to clean up temp file:", error);
       }
     }
-
   } catch (error) {
     console.error("Media upload error:", error);
-    if (error.message === "OAuth 1.0a credentials are required for media uploads") {
-      res.status(500).json({ error: "Server is not configured for media uploads. Please ensure OAuth 1.0a credentials are set." });
+    if (
+      error.message === "OAuth 1.0a credentials are required for media uploads"
+    ) {
+      res
+        .status(500)
+        .json({
+          error:
+            "Server is not configured for media uploads. Please ensure OAuth 1.0a credentials are set.",
+        });
     } else {
-      res.status(500).json({ error: "Failed to upload media: " + error.message });
+      res
+        .status(500)
+        .json({ error: "Failed to upload media: " + error.message });
     }
   }
 }

@@ -9,7 +9,7 @@ export class TwitterService {
     if (!credentials.clientId || !credentials.clientSecret) {
       throw new Error("Twitter OAuth 2.0 credentials are required");
     }
-    
+
     // OAuth 2.0 client for tweet operations
     this.oauth2Client = new TwitterApi({
       clientId: credentials.clientId,
@@ -17,7 +17,12 @@ export class TwitterService {
     });
 
     // OAuth 1.0a client for user operations and media uploads if credentials are provided
-    if (credentials.apiKey && credentials.apiSecret && credentials.accessToken && credentials.accessSecret) {
+    if (
+      credentials.apiKey &&
+      credentials.apiSecret &&
+      credentials.accessToken &&
+      credentials.accessSecret
+    ) {
       try {
         this.oauth1Client = new TwitterApi({
           appKey: credentials.apiKey,
@@ -31,7 +36,9 @@ export class TwitterService {
         this.oauth1Client = null;
       }
     } else {
-      console.warn("Missing OAuth 1.0a credentials - media uploads will not work");
+      console.warn(
+        "Missing OAuth 1.0a credentials - media uploads will not work",
+      );
     }
   }
 
@@ -50,10 +57,10 @@ export class TwitterService {
 
   async getAuthLink(callbackUrl) {
     // Use OAuth 2.0 with PKCE for more granular scope control
-    const { url, codeVerifier, state } = this.oauth2Client.generateOAuth2AuthLink(
-      callbackUrl,
-      { scope: ["tweet.read", "tweet.write", "users.read"] },
-    );
+    const { url, codeVerifier, state } =
+      this.oauth2Client.generateOAuth2AuthLink(callbackUrl, {
+        scope: ["tweet.read", "tweet.write", "users.read"],
+      });
     return { url, codeVerifier, state };
   }
 
@@ -73,10 +80,12 @@ export class TwitterService {
     try {
       // Read the file into a buffer
       const buffer = await fs.promises.readFile(mediaPath);
-      
+
       // For media uploads, we use the app-only OAuth 1.0a client
       // The user's OAuth 2.0 access token is not used for media uploads
-      const mediaId = await this.oauth1Client.v1.uploadMedia(buffer, { mimeType });
+      const mediaId = await this.oauth1Client.v1.uploadMedia(buffer, {
+        mimeType,
+      });
       console.log("Media upload successful, mediaId:", mediaId);
       return mediaId;
     } catch (error) {
@@ -88,7 +97,9 @@ export class TwitterService {
   async tweet(accessToken, posts) {
     // If no access token is provided, user is not connected
     if (!accessToken) {
-      throw new Error("Authentication required: Please connect your Twitter account");
+      throw new Error(
+        "Authentication required: Please connect your Twitter account",
+      );
     }
 
     // Handle array of post objects
@@ -103,12 +114,12 @@ export class TwitterService {
       if (posts.length === 1) {
         const post = posts[0];
         const tweetData = { text: post.text };
-        
+
         // Add media if present
         if (post.mediaId) {
           tweetData.media = { media_ids: post.mediaId };
         }
-        
+
         return userClient.v2.tweet(tweetData);
       } else {
         // Thread implementation
@@ -118,8 +129,10 @@ export class TwitterService {
         for (const post of posts) {
           const tweetData = {
             text: post.text,
-            ...(lastTweetId && { reply: { in_reply_to_tweet_id: lastTweetId } }),
-            ...(post.mediaId && { media: { media_ids: post.mediaId } })
+            ...(lastTweetId && {
+              reply: { in_reply_to_tweet_id: lastTweetId },
+            }),
+            ...(post.mediaId && { media: { media_ids: post.mediaId } }),
           };
 
           const response = await userClient.v2.tweet(tweetData);
@@ -131,7 +144,9 @@ export class TwitterService {
       }
     } catch (error) {
       console.error("Failed to post tweet:", error);
-      throw new Error("Failed to post tweet: " + (error.message || "Please try again"));
+      throw new Error(
+        "Failed to post tweet: " + (error.message || "Please try again"),
+      );
     }
   }
 

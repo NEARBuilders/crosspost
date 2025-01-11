@@ -3,7 +3,14 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "./ui/button";
 
-function SortablePostComponent({ post, index, onTextChange, onRemove, onMediaUpload, onMediaRemove }) {
+function SortablePostComponent({
+  post,
+  index,
+  onTextChange,
+  onRemove,
+  onMediaUpload,
+  onMediaRemove,
+}) {
   const {
     attributes,
     listeners,
@@ -20,7 +27,11 @@ function SortablePostComponent({ post, index, onTextChange, onRemove, onMediaUpl
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex gap-2 sm:px-4 -mx-4 sm:mx-0">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex gap-2 sm:px-4 -mx-4 sm:mx-0"
+    >
       <div className="flex-none w-8">
         <div
           {...attributes}
@@ -57,55 +68,65 @@ function SortablePostComponent({ post, index, onTextChange, onRemove, onMediaUpl
         />
         <div className="flex flex-col gap-2 mt-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">
-              {post.text.length}/280 characters
-            </span>
-            {onRemove && (
+            <div className="flex flex-row gap-2">
+              <input
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => onMediaUpload(index, e.target.files[0])}
+                className="hidden"
+                id={`media-upload-${index}`}
+              />
               <Button
-                onClick={() => onRemove(index)}
-                variant="destructive"
+                onClick={() =>
+                  document.getElementById(`media-upload-${index}`).click()
+                }
+                size="sm"
+                variant="outline"
+                disabled={post.mediaId !== null}
+              >
+                Add Media
+              </Button>
+              {post.mediaPreview && (
+                <>
+                  <div className="relative">
+                    <img
+                      src={post.mediaPreview}
+                      alt="Preview"
+                      className="h-10 w-10 object-cover rounded"
+                    />
+                    <Button
+                      onClick={() => onMediaRemove(index)}
+                      size="sm"
+                      variant="destructive"
+                      className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
+                    >
+                      ×
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">
+                {post.text.length}/280 characters
+              </span>
+              <Button
+                onClick={() => onTextChange(index, "")}
+                // variant="destructive"
                 size="sm"
               >
-                Remove
+                Clear
               </Button>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={(e) => onMediaUpload(index, e.target.files[0])}
-              className="hidden"
-              id={`media-upload-${index}`}
-            />
-            <Button
-              onClick={() => document.getElementById(`media-upload-${index}`).click()}
-              size="sm"
-              variant="outline"
-              disabled={post.mediaId !== null}
-            >
-              Add Media
-            </Button>
-            {post.mediaPreview && (
-              <>
-                <div className="relative">
-                  <img 
-                    src={post.mediaPreview} 
-                    alt="Preview" 
-                    className="h-10 w-10 object-cover rounded"
-                  />
-                  <Button
-                    onClick={() => onMediaRemove(index)}
-                    size="sm"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
-                  >
-                    ×
-                  </Button>
-                </div>
-              </>
-            )}
+              {onRemove && (
+                <Button
+                  onClick={() => onRemove(index)}
+                  variant="destructive"
+                  size="sm"
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

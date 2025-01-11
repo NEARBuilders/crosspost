@@ -34,7 +34,9 @@ export function ComposePost({ onSubmit }) {
     }),
   );
 
-  const [posts, setPosts] = useState([{ text: "", mediaId: null, mediaPreview: null }]);
+  const [posts, setPosts] = useState([
+    { text: "", mediaId: null, mediaPreview: null },
+  ]);
   const [error, setError] = useState("");
   const {
     setModalOpen,
@@ -84,7 +86,7 @@ export function ComposePost({ onSubmit }) {
   }, [setModalOpen]);
 
   const hasMultipleImages = useCallback(() => {
-    return posts.filter(post => post.mediaId !== null).length > 1;
+    return posts.filter((post) => post.mediaId !== null).length > 1;
   }, [posts]);
 
   const handleModeToggle = useCallback(() => {
@@ -102,12 +104,20 @@ export function ComposePost({ onSubmit }) {
     // Recreate previews and save after mode switch
     setTimeout(() => {
       // Use latest posts state when saving
-      setPosts(currentPosts => {
+      setPosts((currentPosts) => {
         saveAutoSave(currentPosts);
         return currentPosts;
       });
     }, 0);
-  }, [isThreadMode, hasMultipleImages, convertToSingle, convertToThread, posts, setThreadMode, saveAutoSave]);
+  }, [
+    isThreadMode,
+    hasMultipleImages,
+    convertToSingle,
+    convertToThread,
+    posts,
+    setThreadMode,
+    saveAutoSave,
+  ]);
 
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
@@ -160,8 +170,8 @@ export function ComposePost({ onSubmit }) {
           <Tooltip>
             <TooltipTrigger asChild>
               <div>
-                <Button 
-                  onClick={handleModeToggle} 
+                <Button
+                  onClick={handleModeToggle}
                   size="sm"
                   disabled={isThreadMode && hasMultipleImages()}
                 >
@@ -203,7 +213,7 @@ export function ComposePost({ onSubmit }) {
             </SortableContext>
           </DndContext>
           <Button onClick={addThread} className="w-full" size="sm">
-            + Add Thread
+            + Add Post
           </Button>
         </div>
       ) : (
@@ -215,40 +225,42 @@ export function ComposePost({ onSubmit }) {
             maxLength={280 * posts.length} // Allow for multiple tweets worth in single mode
             className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
           />
-          <div className="mt-2">
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleSingleMediaUpload}
-              className="hidden"
-              id="media-upload-single"
-            />
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={handleMediaInputClick}
-                size="sm"
-                variant="outline"
-                disabled={posts[0].mediaId !== null}
-              >
-                Add Media
-              </Button>
-              {posts[0].mediaPreview && (
-                <div className="relative">
-                  <img
-                    src={posts[0].mediaPreview}
-                    alt="Preview"
-                    className="h-10 w-10 object-cover rounded"
-                  />
-                  <Button
-                    onClick={handleSingleMediaRemove}
-                    size="sm"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
-                  >
-                    ×
-                  </Button>
-                </div>
-              )}
+          <div>
+            <div className="mt-2 flex justify-end">
+              <input
+                type="file"
+                accept="image/*,video/*"
+                onChange={handleSingleMediaUpload}
+                className="hidden"
+                id="media-upload-single"
+              />
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleMediaInputClick}
+                  size="sm"
+                  variant="outline"
+                  disabled={posts[0].mediaId !== null}
+                >
+                  Add Media
+                </Button>
+                {posts[0].mediaPreview && (
+                  <div className="relative">
+                    <img
+                      src={posts[0].mediaPreview}
+                      alt="Preview"
+                      className="h-10 w-10 object-cover rounded"
+                    />
+                    <Button
+                      onClick={handleSingleMediaRemove}
+                      size="sm"
+                      variant="destructive"
+                      className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
+                    >
+                      ×
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
