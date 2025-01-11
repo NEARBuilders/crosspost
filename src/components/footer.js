@@ -1,8 +1,18 @@
 import Image from "next/image";
+import { Button } from "./ui/button";
 
 export function Footer() {
   return (
-    <footer className="flex justify-end m-2 sm:m-4 font-mono text-gray-500 text-xs sm:text-sm">
+    <footer className="flex justify-between m-2 sm:m-4 font-mono text-gray-500 text-xs sm:text-sm">
+      <Button asChild>
+        <a
+          href="https://app.potlock.org/?tab=project&projectId=crosspost.near"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          donate ❤️
+        </a>
+      </Button>
       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
         <div className="flex items-center gap-1 sm:gap-2">
           <span>a part of</span>
