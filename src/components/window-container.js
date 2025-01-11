@@ -5,6 +5,7 @@ import { PenSquare } from "lucide-react";
 import { useContext } from "react";
 import { ConnectToNearButton } from "./connect-to-near";
 import { ConnectToTwitterButton } from "./connect-to-twitter";
+import Link from "next/link";
 
 export const WindowControls = () => {
   // const [isOpen, setIsOpen] = useState(false);
@@ -19,10 +20,12 @@ export const WindowControls = () => {
   return (
     <div className="relative border-b-2 border-gray-800 p-6">
       <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
-        <div className="flex items-center gap-2">
-          <PenSquare size={24} />
-          <h1 className="text-3xl font-bold">crosspost</h1>
-        </div>
+        <Link asChild href="/">
+          <div className="flex items-center gap-2">
+            <PenSquare size={24} />
+            <h1 className="text-3xl font-bold">crosspost</h1>
+          </div>
+        </Link>
         <div className="flex flex-col items-center gap-4 sm:flex-row">
           <ConnectToNearButton />
           {signedAccountId && <ConnectToTwitterButton />}

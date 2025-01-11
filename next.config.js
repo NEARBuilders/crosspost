@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "builders.mypinata.cloud",
       },
+      {
+        protocol: "https",
+        hostname: "ipfs.near.social",
+      },
     ],
   },
 };

@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "@builddao/near-social-js": "1.1.0-beta.6",
+    "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.20",
     "encoding": "^0.1.13",
     "eslint": "^8",
