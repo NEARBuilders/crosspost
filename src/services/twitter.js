@@ -151,9 +151,10 @@ export class TwitterService {
   }
 
   async getUserInfo(accessToken) {
-    // If no access token is provided, user is not connected
-    if (!accessToken) {
-      return null;
+    if (!this.oauth1Client) {
+      throw new Error(
+        "OAuth 1.0a credentials are required for user operations",
+      );
     }
 
     try {

@@ -30,6 +30,9 @@ import { useTwitterConnection } from "@/store/twitter-store";
 import { useToast } from "@/hooks/use-toast";
 import { RequestFeatureButton } from "./feature-request-modal";
 
+// This "widget" handles all of the editing for post content
+// Calls "onSubmit" with an array of post objects
+
 export function ComposePost({ onSubmit }) {
   const { toast } = useToast();
   const sensors = useSensors(
