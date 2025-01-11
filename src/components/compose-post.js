@@ -172,10 +172,6 @@ export function ComposePost({ onSubmit }) {
       await onSubmit(nonEmptyPosts);
       setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
       clearAutoSave();
-      toast({
-        title: "Posted Successfully",
-        description: "Your content has been posted.",
-      });
     } catch (err) {
       console.error("Post error:", err);
     }

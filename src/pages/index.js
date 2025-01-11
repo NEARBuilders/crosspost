@@ -22,11 +22,15 @@ export default function Home() {
         promises.push(postToNearSocial(posts));
       }
 
-      // if (TWITTER_ENABLED) {
-      //   promises.push(tweet(posts));
-      // }
+      if (TWITTER_ENABLED) {
+        promises.push(tweet(posts));
+      }
 
       await Promise.all(promises); // execute all postings
+      toast({
+        title: "Post Successful",
+        description: "Your post has been published",
+      });
     } catch (e) {
       toast({
         title: "Post Failed",

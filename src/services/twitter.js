@@ -117,7 +117,7 @@ export class TwitterService {
 
         // Add media if present
         if (post.mediaId) {
-          tweetData.media = { media_ids: post.mediaId };
+          tweetData.media = { media_ids: [post.mediaId] };
         }
 
         return userClient.v2.tweet(tweetData);
@@ -132,7 +132,7 @@ export class TwitterService {
             ...(lastTweetId && {
               reply: { in_reply_to_tweet_id: lastTweetId },
             }),
-            ...(post.mediaId && { media: { media_ids: post.mediaId } }),
+            ...(post.mediaId && { media: { media_ids: [post.mediaId] } }),
           };
 
           const response = await userClient.v2.tweet(tweetData);
