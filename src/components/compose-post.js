@@ -55,7 +55,13 @@ export function ComposePost({ onSubmit }) {
   // Memoized draft save handler
   const handleSaveDraft = useCallback(() => {
     saveDraft(posts);
-  }, [saveDraft, posts]);
+    toast({
+      title: "Draft Saved",
+      description: "Your draft has been saved successfully.",
+    });
+    clearAutoSave();
+    setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
+  }, [saveDraft, posts, toast, setPosts, clearAutoSave]);
 
   // Custom hooks
   const { handleMediaUpload, removeMedia } = usePostMedia(
@@ -162,10 +168,14 @@ export function ComposePost({ onSubmit }) {
       await onSubmit(nonEmptyPosts);
       setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
       clearAutoSave();
+      toast({
+        title: "Posted Successfully",
+        description: "Your content has been posted.",
+      });
     } catch (err) {
       console.error("Post error:", err);
     }
-  }, [clearAutoSave, onSubmit, posts, toast]);
+  }, [clearAutoSave, onSubmit, posts, toast, setPosts]);
 
   return (
     <div className="space-y-3">

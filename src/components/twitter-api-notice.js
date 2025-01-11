@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 export function TwitterApiNotice({ post }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
   const [hasShown, setHasShown] = useState(false);
   const { isConnected } = useTwitterConnection();

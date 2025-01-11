@@ -28,7 +28,7 @@ export const Avatar = ({ url, accountId, size = 48 }) => {
   }, [url, accountId]);
 
   return (
-    <img
+    <Image
       src={profileUrl ?? fallbackUrl}
       alt={profileName}
       width={size}
