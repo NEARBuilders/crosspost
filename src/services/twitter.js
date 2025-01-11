@@ -8,7 +8,7 @@ export class TwitterService {
     if (!credentials.clientId || !credentials.clientSecret) {
       throw new Error("Twitter OAuth 2.0 credentials are required");
     }
-    
+
     // OAuth 2.0 client for tweet operations
     this.oauth2Client = new TwitterApi({
       clientId: credentials.clientId,
@@ -16,7 +16,12 @@ export class TwitterService {
     });
 
     // OAuth 1.0a client for user operations if credentials are provided
-    if (credentials.apiKey && credentials.apiSecret && credentials.accessToken && credentials.accessSecret) {
+    if (
+      credentials.apiKey &&
+      credentials.apiSecret &&
+      credentials.accessToken &&
+      credentials.accessSecret
+    ) {
       this.oauth1Client = new TwitterApi({
         appKey: credentials.apiKey,
         appSecret: credentials.apiSecret,
@@ -41,10 +46,10 @@ export class TwitterService {
 
   async getAuthLink(callbackUrl) {
     // Use OAuth 2.0 with PKCE for more granular scope control
-    const { url, codeVerifier, state } = this.oauth2Client.generateOAuth2AuthLink(
-      callbackUrl,
-      { scope: ["tweet.read", "tweet.write", "users.read"] },
-    );
+    const { url, codeVerifier, state } =
+      this.oauth2Client.generateOAuth2AuthLink(callbackUrl, {
+        scope: ["tweet.read", "tweet.write", "users.read"],
+      });
     return { url, codeVerifier, state };
   }
 
@@ -89,7 +94,9 @@ export class TwitterService {
 
   async getUserInfo(accessToken) {
     if (!this.oauth1Client) {
-      throw new Error("OAuth 1.0a credentials are required for user operations");
+      throw new Error(
+        "OAuth 1.0a credentials are required for user operations",
+      );
     }
 
     try {

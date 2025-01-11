@@ -36,7 +36,11 @@ function SortablePost({ post, index, onTextChange, onRemove }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex gap-2 sm:px-4 -mx-4 sm:mx-0">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex gap-2 sm:px-4 -mx-4 sm:mx-0"
+    >
       <div className="flex-none w-8">
         <div
           {...attributes}
@@ -77,8 +81,8 @@ function SortablePost({ post, index, onTextChange, onRemove }) {
           </span>
           <Button
             onClick={() => onRemove(index)}
-          variant="destructive"
-          size="sm"
+            variant="destructive"
+            size="sm"
           >
             Remove
           </Button>
@@ -96,7 +100,7 @@ export function ComposePost({ onSubmit }) {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const [isThreadMode, setIsThreadMode] = useState(false);
