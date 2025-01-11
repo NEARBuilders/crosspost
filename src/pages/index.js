@@ -1,15 +1,27 @@
+import { TwitterApiNotice } from "@/components/twitter-api-notice";
+import { NEAR_SOCIAL_ENABLED, TWITTER_ENABLED } from "@/config";
+import { toast } from "@/hooks/use-toast";
+import { tweet } from "@/lib/twitter";
+import { useNearSocialPost } from "@/store/near-social-store";
 import { useTwitterConnection } from "@/store/twitter-store";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ComposePost } from "../components/compose-post";
 import { NearContext } from "../wallets/near";
-import { NEAR_SOCIAL_ENABLED, TWITTER_ENABLED } from "@/config";
-import { useNearSocialPost } from "@/store/near-social-store";
-import { tweet } from "@/lib/twitter";
-import { TwitterApiNotice } from "@/components/twitter-api-notice";
 
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
-  const { isConnected } = useTwitterConnection();
+  const { error } = useTwitterConnection();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Twitter Connection Error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error]); // Run when error state changes
+
   const { post: postToNearSocial } = useNearSocialPost(); // currently needed, so we can "hydrate" client with wallet
 
   // posts to all the enabled target platforms
@@ -48,8 +60,20 @@ export default function Home() {
         //     </p>
         //   </div>
         // )
-
-        <ComposePost onSubmit={post} />
+        <>
+          <ComposePost onSubmit={post} />
+          <button
+            onClick={() => {
+              toast({
+                title: "Twitter Connection Error",
+                description: error,
+                variant: "destructive",
+              });
+            }}
+          >
+            click
+          </button>
+        </>
       )}
     </main>
   );

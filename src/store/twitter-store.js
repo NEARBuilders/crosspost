@@ -13,26 +13,27 @@ const store = (set, get) => ({
   error: null,
   post: tweet,
   init: () => {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     const params = new URLSearchParams(window.location.search);
-    const isConnected = params.get('twitter_connected') === 'true';
-    const handle = params.get('handle');
-    const error = params.get('twitter_error');
-    
+    const isConnected = params.get("twitter_connected") === "true";
+    const handle = params.get("handle");
+    const error = params.get("twitter_error");
+
     if (isConnected && handle) {
       set({ isConnected: true, handle, isConnecting: false, error: null });
     } else if (error) {
       // Handle OAuth errors (e.g., user denied access)
-      set({ 
-        isConnected: false, 
-        isConnecting: false, 
+      const decodedError = decodeURIComponent(error);
+      set({
+        isConnected: false,
+        isConnecting: false,
         handle: null,
-        error: decodeURIComponent(error)
+        error: decodedError,
       });
     }
     // clean url
-    window.history.replaceState({}, '', '/'); 
+    window.history.replaceState({}, "", "/");
   },
   checkConnection: async () => {
     const { isConnected, handle } = await status();
@@ -44,7 +45,8 @@ const store = (set, get) => ({
       set({ isConnecting: true, error: null });
       await connectTwitter();
     } catch (err) {
-      set({ isConnecting: false, error: "Failed to connect to Twitter" });
+      const errorMessage = "Failed to connect to Twitter";
+      set({ isConnecting: false, error: errorMessage });
       console.error("Twitter connection error:", err);
     }
   },
@@ -58,7 +60,7 @@ const store = (set, get) => ({
 export const useTwitterStore = create(store);
 
 // Initialize store
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   useTwitterStore.getState().init();
 }
 

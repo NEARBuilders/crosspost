@@ -5,6 +5,7 @@ import "../styles/globals.css";
 
 import { Footer } from "@/components/footer";
 import { GithubForkRibbon } from "@/components/github-fork-ribbon";
+import { Toaster } from "@/components/ui/toaster";
 import { SOCIAL_CONTRACT } from "@/lib/near-social";
 import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
@@ -74,6 +75,7 @@ export default function App({ Component, pageProps }) {
         </WindowContainer>
       </NearContext.Provider>
       <Footer />
+      <Toaster />
     </>
   );
 }
