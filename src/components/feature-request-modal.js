@@ -172,40 +172,51 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
                 />
               </div>
 
-              <div>
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={handleMediaUploadChange}
-                  className="hidden"
-                  id="feature-request-media"
-                />
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={handleMediaInputClick}
-                    size="sm"
-                    disabled={posts[0].mediaId !== null}
-                  >
-                    Add Media
-                  </Button>
-                  {posts[0].mediaPreview && (
-                    <div className="relative">
-                      <img
-                        src={posts[0].mediaPreview}
-                        alt="Preview"
-                        className="h-10 w-10 object-cover rounded"
-                      />
-                      <Button
-                        onClick={handleMediaRemove}
-                        size="sm"
-                        variant="destructive"
-                        className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  )}
+              <div className="flex justify-between gap-2">
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleMediaUploadChange}
+                    className="hidden"
+                    id="feature-request-media"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleMediaInputClick}
+                      size="sm"
+                      disabled={posts[0].mediaId !== null}
+                    >
+                      Add Media
+                    </Button>
+                    {posts[0].mediaPreview && (
+                      <div className="relative">
+                        <img
+                          src={posts[0].mediaPreview}
+                          alt="Preview"
+                          className="h-10 w-10 object-cover rounded"
+                        />
+                        <Button
+                          onClick={handleMediaRemove}
+                          size="sm"
+                          variant="destructive"
+                          className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                <Button asChild size="sm">
+                  <a
+                    href="https://crosspost-bot.fly.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    view current requests
+                  </a>
+                </Button>
               </div>
 
               <div className="flex justify-between items-center">
