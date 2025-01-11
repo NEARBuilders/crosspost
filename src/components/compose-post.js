@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "./ui/tooltip";
+import { useTwitterConnection } from "@/store/twitter-store";
 
 export function ComposePost({ onSubmit }) {
   const sensors = useSensors(
@@ -68,6 +69,8 @@ export function ComposePost({ onSubmit }) {
     convertToThread,
     convertToSingle,
   } = usePostManagement(posts, setPosts, saveAutoSave);
+
+  const { isConnected } = useTwitterConnection();
 
   // Load auto-saved content on mount and handle cleanup
   useEffect(() => {
@@ -173,7 +176,10 @@ export function ComposePost({ onSubmit }) {
                 <Button
                   onClick={handleModeToggle}
                   size="sm"
-                  disabled={isThreadMode && hasMultipleImages()}
+                  disabled={
+                    (isThreadMode && hasMultipleImages()) ||
+                    (!isThreadMode && !isConnected)
+                  }
                 >
                   {isThreadMode ? "Single Post Mode" : "Thread Mode"}
                 </Button>
@@ -182,6 +188,11 @@ export function ComposePost({ onSubmit }) {
             {isThreadMode && hasMultipleImages() && (
               <TooltipContent>
                 <p>Cannot switch while multiple images exist</p>
+              </TooltipContent>
+            )}
+            {!isThreadMode && !isConnected && (
+              <TooltipContent>
+                <p>Thread mode not available for Near Social</p>
               </TooltipContent>
             )}
           </Tooltip>
