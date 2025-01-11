@@ -54,6 +54,7 @@
     "lucide-react": "^0.469.0",
     "near-api-js": "^4.0.3",
     "next": "14.2.13",
+    "posthog-js": "^1.205.0",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
     "react-confetti": "^6.2.2",
