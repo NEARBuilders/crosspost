@@ -48,7 +48,7 @@ export default function App({ Component, pageProps }) {
           property="og:description"
           content="Open source user interface to crosspost across Twitter (X) and Near Social platforms."
         />
-        <meta property="og:image" content="/og-image.svg" />
+        <meta property="og:image" content="/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
@@ -66,7 +66,7 @@ export default function App({ Component, pageProps }) {
           property="twitter:description"
           content="Open source user interface to crosspost across Twitter (X) and Near Social platforms."
         />
-        <meta property="twitter:image" content="/og-image.svg" />
+        <meta property="twitter:image" content="/og-image.png" />
       </Head>
       <GithubForkRibbon />
       <NearContext.Provider value={{ wallet, signedAccountId }}>
