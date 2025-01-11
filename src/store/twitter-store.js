@@ -25,6 +25,7 @@ const store = (set, get) => ({
     } else if (error) {
       // Handle OAuth errors (e.g., user denied access)
       const decodedError = decodeURIComponent(error);
+
       set({
         isConnected: false,
         isConnecting: false,

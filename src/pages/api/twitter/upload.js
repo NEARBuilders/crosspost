@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
   try {
     const form = formidable({});
-    const [fields, files] = await form.parse(req);
+    const [_, files] = await form.parse(req);
 
     if (!files.media?.[0]) {
       return res.status(400).json({ error: "No media file provided" });

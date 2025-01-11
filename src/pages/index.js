@@ -1,26 +1,13 @@
 import { TwitterApiNotice } from "@/components/twitter-api-notice";
 import { NEAR_SOCIAL_ENABLED, TWITTER_ENABLED } from "@/config";
-import { toast } from "@/hooks/use-toast";
 import { tweet } from "@/lib/twitter";
 import { useNearSocialPost } from "@/store/near-social-store";
-import { useTwitterConnection } from "@/store/twitter-store";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { ComposePost } from "../components/compose-post";
 import { NearContext } from "../wallets/near";
 
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
-  const { error } = useTwitterConnection();
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: "Twitter Connection Error",
-        description: error,
-        variant: "destructive",
-      });
-    }
-  }, [error]); // Run when error state changes
 
   const { post: postToNearSocial } = useNearSocialPost(); // currently needed, so we can "hydrate" client with wallet
 
