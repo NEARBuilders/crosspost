@@ -11,7 +11,6 @@ export const WindowControls = () => {
   // const router = useRouter();
   // const { accountId, signOut } = useNearSocialStore();
   const { signedAccountId } = useContext(NearContext);
-  const { isConnected, handle } = useTwitterConnection();
 
   // const menuItems = [
   //   { label: "Home", path: "/" },

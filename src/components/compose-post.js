@@ -27,8 +27,10 @@ import {
   TooltipProvider,
 } from "./ui/tooltip";
 import { useTwitterConnection } from "@/store/twitter-store";
+import { useToast } from "@/hooks/use-toast";
 
 export function ComposePost({ onSubmit }) {
+  const { toast } = useToast();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -39,7 +41,6 @@ export function ComposePost({ onSubmit }) {
   const [posts, setPosts] = useState([
     { text: "", mediaId: null, mediaPreview: null },
   ]);
-  const [error, setError] = useState("");
   const {
     setModalOpen,
     saveDraft,
@@ -59,7 +60,7 @@ export function ComposePost({ onSubmit }) {
   // Custom hooks
   const { handleMediaUpload, removeMedia } = usePostMedia(
     setPosts,
-    setError,
+    toast,
     saveAutoSave,
   );
   const {
@@ -150,19 +151,26 @@ export function ComposePost({ onSubmit }) {
   const handleSubmit = useCallback(async () => {
     const nonEmptyPosts = posts.filter((p) => p.text.trim());
     if (nonEmptyPosts.length === 0) {
-      setError("Please enter your post text");
+      toast({
+        title: "Empty Post",
+        description: "Please enter your post text",
+        variant: "destructive",
+      });
       return;
     }
     try {
-      setError("");
       await onSubmit(nonEmptyPosts);
       setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
       clearAutoSave();
     } catch (err) {
-      setError("Failed to send post");
+      toast({
+        title: "Post Failed",
+        description: err.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
       console.error("Post error:", err);
     }
-  }, [clearAutoSave, onSubmit, posts, setError]);
+  }, [clearAutoSave, onSubmit, posts, toast]);
 
   return (
     <div className="space-y-3">
@@ -300,7 +308,6 @@ export function ComposePost({ onSubmit }) {
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       {isModalOpen && <DraftsModal onSelect={setPosts} />}
     </div>
   );

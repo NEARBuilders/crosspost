@@ -27,11 +27,12 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
           body: formData,
         });
 
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error("Upload failed");
+          throw new Error(data.error || "Upload failed");
         }
 
-        const { mediaId } = await response.json();
+        const { mediaId } = data;
 
         setPosts((posts) => {
           const newPosts = [...posts];
@@ -44,7 +45,12 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
         });
       } catch (error) {
         console.error("Media upload error:", error);
-        setError("Failed to upload media");
+        setError({
+          title: "Media Upload Failed",
+          description: error.message || "Failed to upload media",
+          variant: "destructive"
+        });
+        
         // Remove preview on error
         setPosts((posts) => {
           const newPosts = [...posts];
