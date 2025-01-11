@@ -6,6 +6,8 @@ import {
   tweet,
 } from "../lib/twitter";
 
+const STORAGE_KEY = 'twitter_connection';
+
 const store = (set, get) => ({
   isConnected: false,
   isConnecting: false,
@@ -15,30 +17,57 @@ const store = (set, get) => ({
   init: () => {
     if (typeof window === "undefined") return;
 
+    // First try to restore from URL params (OAuth callback)
     const params = new URLSearchParams(window.location.search);
     const isConnected = params.get("twitter_connected") === "true";
     const handle = params.get("handle");
     const error = params.get("twitter_error");
 
     if (isConnected && handle) {
+      // Save to localStorage and state
+      const connectionState = { isConnected: true, handle };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(connectionState));
       set({ isConnected: true, handle, isConnecting: false, error: null });
     } else if (error) {
       // Handle OAuth errors (e.g., user denied access)
       const decodedError = decodeURIComponent(error);
-
+      localStorage.removeItem(STORAGE_KEY);
       set({
         isConnected: false,
         isConnecting: false,
         handle: null,
         error: decodedError,
       });
+    } else {
+      // Try to restore from localStorage
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const { isConnected, handle } = JSON.parse(saved);
+          set({ isConnected, handle, isConnecting: false, error: null });
+        }
+      } catch (e) {
+        console.error('Failed to restore Twitter connection state:', e);
+      }
     }
     // clean url
     window.history.replaceState({}, "", "/");
   },
   checkConnection: async () => {
-    const { isConnected, handle } = await status();
-    set({ isConnected, handle });
+    try {
+      const { isConnected, handle } = await status();
+      // Update localStorage with verified state
+      if (isConnected && handle) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ isConnected, handle }));
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      set({ isConnected, handle });
+    } catch (error) {
+      console.error('Failed to check Twitter connection:', error);
+      localStorage.removeItem(STORAGE_KEY);
+      set({ isConnected: false, handle: null });
+    }
   },
   connect: async () => {
     if (get().isConnecting) return;
@@ -53,6 +82,7 @@ const store = (set, get) => ({
   },
   disconnect: async () => {
     await disconnectTwitter();
+    localStorage.removeItem(STORAGE_KEY);
     set({ isConnected: false, isConnecting: false, handle: null, error: null });
     await get().checkConnection();
   },

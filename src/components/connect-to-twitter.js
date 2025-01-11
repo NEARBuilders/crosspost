@@ -9,6 +9,11 @@ export function ConnectToTwitterButton() {
     useTwitterConnection();
   const { toast } = useToast();
 
+  // // Check connection status on mount
+  // useEffect(() => {
+  //   checkConnection();
+  // }, [checkConnection]);
+
   useEffect(() => {
     if (error) {
       toast({

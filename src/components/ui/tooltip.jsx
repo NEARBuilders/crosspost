@@ -16,7 +16,7 @@ const TooltipContent = React.forwardRef(
     <TooltipPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
-      delayDuration={100}
+      delayduration={100}
       className={cn(
         "z-50 overflow-hidden rounded-lg border-2 border-gray-800 bg-white px-3 py-1.5 text-sm text-gray-800 shadow-[2px_2px_0_rgba(0,0,0,1)]",
         className,
