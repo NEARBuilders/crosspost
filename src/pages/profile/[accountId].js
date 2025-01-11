@@ -37,18 +37,12 @@ export default function ProfilePage() {
   }
 
   if (error) {
-    return (
-      <div className="text-red-500 p-4 text-center">
-        {error}
-      </div>
-    );
+    return <div className="text-red-500 p-4 text-center">{error}</div>;
   }
 
   if (!profile) {
     return (
-      <div className="text-gray-500 p-4 text-center">
-        No profile found
-      </div>
+      <div className="text-gray-500 p-4 text-center">No profile found</div>
     );
   }
 

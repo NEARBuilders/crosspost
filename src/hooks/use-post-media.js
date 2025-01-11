@@ -48,9 +48,9 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
         setError({
           title: "Media Upload Failed",
           description: error.message || "Failed to upload media",
-          variant: "destructive"
+          variant: "destructive",
         });
-        
+
         // Remove preview on error
         setPosts((posts) => {
           const newPosts = [...posts];

@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 export function Footer() {
   return (
     <footer className="flex justify-between m-2 sm:m-4 font-mono text-gray-500 text-xs sm:text-sm">
-      <Button asChild>
+      <Button asChild className="donate-button">
         <a
           href="https://app.potlock.org/?tab=project&projectId=crosspost.near"
           target="_blank"

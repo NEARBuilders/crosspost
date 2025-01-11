@@ -66,12 +66,10 @@ export default async function handler(req, res) {
     if (
       error.message === "OAuth 1.0a credentials are required for media uploads"
     ) {
-      res
-        .status(500)
-        .json({
-          error:
-            "Server is not configured for media uploads. Please ensure OAuth 1.0a credentials are set.",
-        });
+      res.status(500).json({
+        error:
+          "Server is not configured for media uploads. Please ensure OAuth 1.0a credentials are set.",
+      });
     } else {
       res
         .status(500)

@@ -13,7 +13,9 @@ export default async function handler(req, res) {
   // Handle OAuth errors (e.g., user denied access)
   if (error) {
     console.log("OAuth error:", error, error_description);
-    return res.redirect(`/?twitter_error=${"Twitter access was denied: " + encodeURIComponent(error)}`);
+    return res.redirect(
+      `/?twitter_error=${"Twitter access was denied: " + encodeURIComponent(error)}`,
+    );
   }
 
   // Validate OAuth parameters

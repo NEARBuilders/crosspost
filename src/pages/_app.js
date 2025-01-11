@@ -10,6 +10,7 @@ import { SOCIAL_CONTRACT } from "@/lib/near-social";
 import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
 import { WindowContainer } from "@/components/window-container";
+import { HelperBuddy } from "@/components/helper-buddy";
 
 const wallet = new Wallet({
   networkId: NETWORK_ID,
@@ -18,7 +19,6 @@ const wallet = new Wallet({
 
 export default function App({ Component, pageProps }) {
   const [signedAccountId, setSignedAccountId] = useState("");
-
   useEffect(() => {
     // Start up NEAR wallet
     wallet.startUp(setSignedAccountId);
@@ -76,6 +76,7 @@ export default function App({ Component, pageProps }) {
       </NearContext.Provider>
       <Footer />
       <Toaster />
+      <HelperBuddy />
     </>
   );
 }

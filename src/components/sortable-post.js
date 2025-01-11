@@ -108,7 +108,9 @@ function SortablePostComponent({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <span className={`text-sm ${post.text.length > 280 ? "text-destructive" : "text-gray-500"}`}>
+              <span
+                className={`text-sm ${post.text.length > 280 ? "text-destructive" : "text-gray-500"}`}
+              >
                 {post.text.length}/280 characters
               </span>
               <Button

@@ -5,6 +5,7 @@ import { useNearSocialPost } from "@/store/near-social-store";
 import { useContext } from "react";
 import { ComposePost } from "../components/compose-post";
 import { NearContext } from "../wallets/near";
+import { toast } from "@/hooks/use-toast";
 
 export default function Home() {
   const { signedAccountId } = useContext(NearContext);
@@ -12,20 +13,27 @@ export default function Home() {
   const { post: postToNearSocial } = useNearSocialPost(); // currently needed, so we can "hydrate" client with wallet
 
   // posts to all the enabled target platforms
-  // errors are handled in ComposePost
   const post = async (posts) => {
-    // TODO: generic interface for external plugins
-    const promises = [];
+    try {
+      // TODO: generic interface for external plugins
+      const promises = [];
 
-    if (NEAR_SOCIAL_ENABLED) {
-      promises.push(postToNearSocial(posts));
+      if (NEAR_SOCIAL_ENABLED) {
+        promises.push(postToNearSocial(posts));
+      }
+
+      // if (TWITTER_ENABLED) {
+      //   promises.push(tweet(posts));
+      // }
+
+      await Promise.all(promises); // execute all postings
+    } catch (e) {
+      toast({
+        title: "Post Failed",
+        description: e.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
     }
-
-    if (TWITTER_ENABLED) {
-      promises.push(tweet(posts));
-    }
-
-    await Promise.all(promises); // execute all postings
   };
 
   return (

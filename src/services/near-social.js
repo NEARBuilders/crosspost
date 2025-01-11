@@ -2,8 +2,6 @@ import { Social, transformActions } from "@builddao/near-social-js";
 import { NETWORK_ID } from "../config";
 import { NearSocialClient, SOCIAL_CONTRACT } from "@/lib/near-social";
 
-
-
 // This service is used in the client context,
 // Uses wallet connection to sign public transactions
 
