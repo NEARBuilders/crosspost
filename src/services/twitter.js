@@ -86,46 +86,61 @@ export class TwitterService {
   }
 
   async tweet(accessToken, posts) {
-    // Create OAuth 2.0 client with user access token for tweet operations
-    const userClient = new TwitterApi(accessToken);
+    // If no access token is provided, user is not connected
+    if (!accessToken) {
+      throw new Error("Authentication required: Please connect your Twitter account");
+    }
 
     // Handle array of post objects
     if (!Array.isArray(posts)) {
       throw new Error("Posts must be an array");
     }
 
-    if (posts.length === 1) {
-      const post = posts[0];
-      const tweetData = { text: post.text };
-      
-      // Add media if present
-      if (post.mediaId) {
-        tweetData.media = { media_ids: post.mediaId };
+    try {
+      // Create OAuth 2.0 client with user access token for tweet operations
+      const userClient = new TwitterApi(accessToken);
+
+      if (posts.length === 1) {
+        const post = posts[0];
+        const tweetData = { text: post.text };
+        
+        // Add media if present
+        if (post.mediaId) {
+          tweetData.media = { media_ids: post.mediaId };
+        }
+        
+        return userClient.v2.tweet(tweetData);
+      } else {
+        // Thread implementation
+        let lastTweetId = null;
+        const responses = [];
+
+        for (const post of posts) {
+          const tweetData = {
+            text: post.text,
+            ...(lastTweetId && { reply: { in_reply_to_tweet_id: lastTweetId } }),
+            ...(post.mediaId && { media: { media_ids: post.mediaId } })
+          };
+
+          const response = await userClient.v2.tweet(tweetData);
+          responses.push(response);
+          lastTweetId = response.data.id;
+        }
+
+        return responses;
       }
-      
-      return userClient.v2.tweet(tweetData);
-    } else {
-      // Thread implementation
-      let lastTweetId = null;
-      const responses = [];
-
-      for (const post of posts) {
-        const tweetData = {
-          text: post.text,
-          ...(lastTweetId && { reply: { in_reply_to_tweet_id: lastTweetId } }),
-          ...(post.mediaId && { media: { media_ids: post.mediaId } })
-        };
-
-        const response = await userClient.v2.tweet(tweetData);
-        responses.push(response);
-        lastTweetId = response.data.id;
-      }
-
-      return responses;
+    } catch (error) {
+      console.error("Failed to post tweet:", error);
+      throw new Error("Failed to post tweet: " + (error.message || "Please try again"));
     }
   }
 
   async getUserInfo(accessToken) {
+    // If no access token is provided, user is not connected
+    if (!accessToken) {
+      return null;
+    }
+
     try {
       // Create OAuth 2.0 client with user access token for user operations
       const userClient = new TwitterApi(accessToken);
@@ -133,7 +148,9 @@ export class TwitterService {
       return me.data;
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      throw error;
+      // Return null instead of throwing error when token is invalid
+      // This indicates user is not connected
+      return null;
     }
   }
 }

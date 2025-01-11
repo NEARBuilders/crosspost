@@ -18,12 +18,21 @@ const store = (set, get) => ({
     const params = new URLSearchParams(window.location.search);
     const isConnected = params.get('twitter_connected') === 'true';
     const handle = params.get('handle');
+    const error = params.get('twitter_error');
     
     if (isConnected && handle) {
-      set({ isConnected: true, handle, isConnecting: false });
-      // Clean URL
-      window.history.replaceState({}, '', '/');
+      set({ isConnected: true, handle, isConnecting: false, error: null });
+    } else if (error) {
+      // Handle OAuth errors (e.g., user denied access)
+      set({ 
+        isConnected: false, 
+        isConnecting: false, 
+        handle: null,
+        error: decodeURIComponent(error)
+      });
     }
+    // clean url
+    window.history.replaceState({}, '', '/'); 
   },
   checkConnection: async () => {
     const { isConnected, handle } = await status();
@@ -58,6 +67,7 @@ export const useTwitterConnection = () => {
   const isConnected = useTwitterStore((state) => state.isConnected);
   const isConnecting = useTwitterStore((state) => state.isConnecting);
   const handle = useTwitterStore((state) => state.handle);
+  const error = useTwitterStore((state) => state.error);
   const connect = useTwitterStore((state) => state.connect);
   const disconnect = useTwitterStore((state) => state.disconnect);
   const checkConnection = useTwitterStore((state) => state.checkConnection);
@@ -66,6 +76,7 @@ export const useTwitterConnection = () => {
     isConnected,
     isConnecting,
     handle,
+    error,
     connect,
     disconnect,
     checkConnection,
