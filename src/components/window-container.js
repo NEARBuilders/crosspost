@@ -20,7 +20,7 @@ export const WindowControls = () => {
   return (
     <div className="relative border-b-2 border-gray-800 p-6">
       <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
-        <Link asChild href="/">
+        <Link href="/">
           <div className="flex items-center gap-2">
             <PenSquare size={24} />
             <h1 className="text-3xl font-bold">crosspost</h1>

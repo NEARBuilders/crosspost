@@ -28,6 +28,7 @@ import {
 } from "./ui/tooltip";
 import { useTwitterConnection } from "@/store/twitter-store";
 import { useToast } from "@/hooks/use-toast";
+import { RequestFeatureButton } from "./feature-request-modal";
 
 export function ComposePost({ onSubmit }) {
   const { toast } = useToast();
@@ -179,38 +180,43 @@ export function ComposePost({ onSubmit }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-end gap-2 mb-2">
-        <Button onClick={handleModalOpen} size="sm">
-          Drafts
-        </Button>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button
-                  onClick={handleModeToggle}
-                  size="sm"
-                  disabled={
-                    (isThreadMode && hasMultipleImages()) ||
-                    (!isThreadMode && !isConnected)
-                  }
-                >
-                  {isThreadMode ? "Single Post Mode" : "Thread Mode"}
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {isThreadMode && hasMultipleImages() && (
-              <TooltipContent>
-                <p>Cannot switch while multiple images exist</p>
-              </TooltipContent>
-            )}
-            {!isThreadMode && !isConnected && (
-              <TooltipContent>
-                <p>Thread mode not available for Near Social</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          {isConnected && <RequestFeatureButton post={onSubmit} />}
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={handleModalOpen} size="sm">
+            Drafts
+          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button
+                    onClick={handleModeToggle}
+                    size="sm"
+                    disabled={
+                      (isThreadMode && hasMultipleImages()) ||
+                      (!isThreadMode && !isConnected)
+                    }
+                  >
+                    {isThreadMode ? "Single Post Mode" : "Thread Mode"}
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              {isThreadMode && hasMultipleImages() && (
+                <TooltipContent>
+                  <p>Cannot switch while multiple images exist</p>
+                </TooltipContent>
+              )}
+              {!isThreadMode && !isConnected && (
+                <TooltipContent>
+                  <p>Thread mode not available for Near Social</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
       {isThreadMode ? (
