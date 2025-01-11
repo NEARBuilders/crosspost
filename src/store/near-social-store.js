@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { NearSocialService } from "../services/near-social";
+import { toast } from "@/hooks/use-toast";
 
 const store = (set, get) => ({
   wallet: null,
@@ -10,31 +11,36 @@ const store = (set, get) => ({
     set({ wallet, service });
   },
   // TODO: posting plugin's standard interface
-  post: async (content) => {
+  post: async (posts) => {
     const { service } = get();
     if (!service) {
       throw new Error("Near Social service not initialized");
     }
 
     try {
-      const transaction = await service.createPost(content);
+      const transaction = await service.createPost(posts);
 
       if (!transaction) {
         throw new Error("Failed to create post transaction");
       }
 
-      await get().wallet.signAndSendTransactions({
-        // we're in application state
-        // plugin is using it as middleware for signing transactions
-        transactions: [
-          {
-            receiverId: transaction.contractId,
-            actions: transaction.actions,
-          },
-        ],
-      });
+      try {
+        await get().wallet.signAndSendTransactions({
+          // we're in application state
+          // plugin is using it as middleware for signing transactions
+          transactions: [
+            {
+              receiverId: transaction.contractId,
+              actions: transaction.actions,
+            },
+          ],
+        });
 
-      return true;
+        return true;
+      } catch (error) {
+        console.error("Near Social post error:", error);
+        throw error;
+      }
     } catch (error) {
       console.error("Near Social post error:", error);
       throw error;

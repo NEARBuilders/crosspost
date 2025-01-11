@@ -2,34 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-.blob {
-  position: fixed;
-  width: 500px;
-  height: 500px;
-  background: linear-gradient(
-    to right,
-    rgba(67, 56, 202, 0.4),
-    rgba(168, 85, 247, 0.4),
-    rgba(236, 72, 153, 0.4)
-  );
-  border-radius: 50%;
-  filter: blur(100px);
-  transition: all 0.3s ease;
-  pointer-events: none;
-  opacity: 0.7;
-  mix-blend-mode: screen;
-  animation: pulse 8s infinite;
-}
+@layer components {
+  .base-component {
+    @apply border-2 border-gray-800 bg-white shadow-custom;
+  }
+  
+  .base-component-hover {
+    @apply hover:bg-gray-100;
+  }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
+  .base-component-ghost {
+    @apply border-0 shadow-none hover:bg-accent hover:text-accent-foreground;
   }
 }
 

@@ -32,7 +32,7 @@ export function ConnectToNearButton() {
   return (
     <Button onClick={signedAccountId ? handleSignOut : handleSignIn}>
       <Wallet size={18} />
-      {signedAccountId ? "Disconnect NEAR" : "Connect NEAR"}
+      {signedAccountId ? `Disconnect @${signedAccountId}` : "Connect NEAR"}
     </Button>
   );
 }

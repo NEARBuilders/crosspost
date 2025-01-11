@@ -1,15 +1,6 @@
 import { Social, transformActions } from "@builddao/near-social-js";
 import { NETWORK_ID } from "../config";
-
-const SOCIAL_CONTRACT = {
-  mainnet: "social.near",
-  testnet: "v1.social08.testnet",
-};
-
-const NearSocialClient = new Social({
-  contractId: SOCIAL_CONTRACT[NETWORK_ID],
-  network: NETWORK_ID,
-});
+import { NearSocialClient, SOCIAL_CONTRACT } from "@/lib/near-social";
 
 // This service is used in the client context,
 // Uses wallet connection to sign public transactions

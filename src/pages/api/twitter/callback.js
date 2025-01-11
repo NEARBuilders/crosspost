@@ -6,17 +6,36 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { code, state } = req.query;
+  const { code, state, error, error_description } = req.query;
   const cookies = parse(req.headers.cookie || "");
   const { code_verifier, oauth_state } = cookies;
 
-  if (!code || !state || !code_verifier || !oauth_state) {
-    return res.status(400).json({ error: "Missing OAuth parameters" });
+  // Handle OAuth errors (e.g., user denied access)
+  if (error) {
+    console.log("OAuth error:", error, error_description);
+    return res.redirect(
+      `/?twitter_error=${"Twitter access was denied: " + encodeURIComponent(error)}`,
+    );
+  }
+
+  // Validate OAuth parameters
+  if (!code || !state) {
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Missing authorization code")}`,
+    );
+  }
+
+  if (!code_verifier || !oauth_state) {
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Invalid session state")}`,
+    );
   }
 
   // Verify the state parameter to prevent CSRF attacks
   if (state !== oauth_state) {
-    return res.status(400).json({ error: "Invalid OAuth state" });
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Invalid OAuth state")}`,
+    );
   }
 
   try {
@@ -27,6 +46,9 @@ export default async function handler(req, res) {
       state,
     );
 
+    // Get user info using the new access token
+    const userInfo = await twitterService.getUserInfo(accessToken);
+
     // Store tokens in HttpOnly cookies
     res.setHeader("Set-Cookie", [
       `twitter_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
@@ -35,12 +57,12 @@ export default async function handler(req, res) {
       "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
     ]);
 
-    // Clean redirect since we're using Zustand store
-    res.redirect("/");
+    // Redirect with user info
+    res.redirect(`/?twitter_connected=true&handle=${userInfo.username}`);
   } catch (error) {
     console.error("Twitter callback error:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to complete Twitter authentication" });
+    return res.redirect(
+      `/?twitter_error=${encodeURIComponent("Failed to complete Twitter authentication")}`,
+    );
   }
 }

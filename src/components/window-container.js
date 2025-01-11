@@ -5,13 +5,13 @@ import { PenSquare } from "lucide-react";
 import { useContext } from "react";
 import { ConnectToNearButton } from "./connect-to-near";
 import { ConnectToTwitterButton } from "./connect-to-twitter";
+import Link from "next/link";
 
 export const WindowControls = () => {
   // const [isOpen, setIsOpen] = useState(false);
   // const router = useRouter();
   // const { accountId, signOut } = useNearSocialStore();
   const { signedAccountId } = useContext(NearContext);
-  const { isConnected, handle } = useTwitterConnection();
 
   // const menuItems = [
   //   { label: "Home", path: "/" },
@@ -20,23 +20,17 @@ export const WindowControls = () => {
   return (
     <div className="relative border-b-2 border-gray-800 p-6">
       <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
-        <div className="flex items-center gap-2">
-          <PenSquare size={24} />
-          <h1 className="text-3xl font-bold">crosspost</h1>
-        </div>
+        <Link href="/">
+          <div className="flex items-center gap-2">
+            <PenSquare size={24} />
+            <h1 className="text-3xl font-bold">crosspost</h1>
+          </div>
+        </Link>
         <div className="flex flex-col items-center gap-4 sm:flex-row">
           <ConnectToNearButton />
           {signedAccountId && <ConnectToTwitterButton />}
         </div>
       </div>
-      {signedAccountId && (
-        <div className="mt-4 space-y-1 text-center sm:text-left">
-          <p className="text-sm text-gray-600">NEAR: {signedAccountId}</p>
-          {isConnected && handle && (
-            <p className="text-sm text-gray-600">Twitter: @{handle}</p>
-          )}
-        </div>
-      )}
       {/* <div className="flex items-center justify-end">
         <div
           className="mx-4 my-3 h-4 w-4 cursor-pointer rounded-full bg-black transition-opacity hover:opacity-80"
@@ -92,7 +86,7 @@ export function WindowContainer({ children }) {
         className="mx-1 sm:mx-auto min-h-[790px] max-w-4xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]"
       >
         <WindowControls />
-        <div className="sm:p-8 p-2">{children}</div>
+        <div className="md:p-8 p-2">{children}</div>
       </motion.div>
     </div>
   );

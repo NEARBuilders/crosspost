@@ -1,70 +1,107 @@
-import { useEffect, useState } from "react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { motion } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
+import ReactConfetti from "react-confetti";
+import { useTwitterConnection } from "../store/twitter-store";
 import { ModalWindowControls } from "./modal-window-controls";
-import { format } from "date-fns";
+import { ProfileHighlight } from "./social/profile-highlight";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
-export function TwitterApiNotice() {
+export function TwitterApiNotice({ post }) {
+  const NOTICE_SHOWN_KEY = "twitter_api_notice_shown";
   const [open, setOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(true);
+  const { isConnected } = useTwitterConnection();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setOpen(true);
-    }, 800);
+    if (typeof window === "undefined") return;
 
-    return () => clearTimeout(timer);
-  }, []);
+    const hasShown = localStorage.getItem(NOTICE_SHOWN_KEY) === "true";
+    if (isConnected && !hasShown) {
+      const timer = setTimeout(() => {
+        setOpen(true);
+        localStorage.setItem(NOTICE_SHOWN_KEY, "true");
+      }, 800);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isConnected]);
+
+  const handleThanks = () => {
+    post([
+      {
+        text: "thanks @David___Mo! we love you for saving @open_crosspost 🚀✨💖🎉",
+      },
+    ]);
+    setOpen(false);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="border-none bg-transparent p-0 shadow-none">
-        <motion.div
-          initial={{ opacity: 0, x: 0 }}
-          animate={{
-            opacity: 1,
-            x: [0, -10, 10, -5, 5, 0],
-            transition: {
-              opacity: { duration: 0.1 },
-              x: { duration: 0.5, times: [0, 0.2, 0.4, 0.6, 0.8, 1] },
-            },
-          }}
-          className="relative border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]"
-        >
-          <ModalWindowControls onClose={() => setOpen(false)} />
-          <div className="p-6">
-            <DialogHeader className="text-left">
-              <DialogTitle className="font-mono text-xl font-semibold">
-                We&apos;ve been ratelimited.
-              </DialogTitle>
-              <DialogDescription className="text-gray-600">
-                We exceeded our ration of 17 tweets per 24 hours... so while we
-                wait until{" "}
-                {format(new Date(1736524953 * 1000), "h:mm a 'on' MMM d, yyyy")}
-                , we&apos;re raising funds to pay the absurd $200/month API fee.
-              </DialogDescription>
-              <div className="pt-2 flex gap-4">
-                <Button asChild>
-                  <a
-                    href="https://app.potlock.org/?tab=project&projectId=crosspost.near"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    please donate
-                  </a>
-                </Button>
-                <Button disabled>buy $XPOST</Button>
+    <>
+      {showConfetti && open && (
+        <div className="fixed inset-0 z-50 pointer-events-none">
+          <ReactConfetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={200}
+            onConfettiComplete={() => setShowConfetti(false)}
+          />
+        </div>
+      )}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="border-none bg-transparent p-0 shadow-none">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              x: [0, -10, 10, -5, 5, 0],
+              transition: {
+                opacity: { duration: 0.1 },
+                x: { duration: 0.5, times: [0, 0.2, 0.4, 0.6, 0.8, 1] },
+              },
+            }}
+            className="relative w-full max-w-2xl base-component"
+          >
+            <ModalWindowControls onClose={() => setOpen(false)} />
+            <div className="p-6 relative">
+              <div className="flex gap-6">
+                <div className="mt-4">
+                  <ProfileHighlight
+                    accountId="davidmo.near"
+                    tooltipContent='"NEAR is the blockchain for AI!"'
+                    size={128}
+                  />
+                </div>
+
+                <div className="flex-grow space-y-4">
+                  <DialogHeader>
+                    <VisuallyHidden.Root>
+                      <DialogTitle className="font-mono text-2xl font-bold">
+                        We&apos;re back in business!
+                      </DialogTitle>
+                    </VisuallyHidden.Root>
+                  </DialogHeader>
+
+                  <DialogTitle className="text-2xl font-bold">
+                    We&apos;re back in business!
+                  </DialogTitle>
+
+                  <p className="text-gray-600">
+                    The incredible David Morrison (davidmo.near) donated 40N to
+                    pay the month of January&apos;s API fee! 🎉
+                  </p>
+
+                  <div className="flex justify-end">
+                    <Button onClick={handleThanks}>say thanks!</Button>
+                  </div>
+                </div>
               </div>
-            </DialogHeader>
-          </div>
-        </motion.div>
-      </DialogContent>
-    </Dialog>
+            </div>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
