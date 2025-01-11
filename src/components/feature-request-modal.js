@@ -21,7 +21,7 @@ import {
 import { Textarea } from "./ui/textarea";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
-const PREPEND_TEXT = "@open_crosspost !submit";
+const PREPEND_TEXT = "!submit @open_crosspost";
 
 export function RequestFeatureButton({ post }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
