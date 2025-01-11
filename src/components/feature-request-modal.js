@@ -214,7 +214,7 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    view current requests
+                    View current requests
                   </a>
                 </Button>
               </div>
