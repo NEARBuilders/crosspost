@@ -82,7 +82,6 @@ function SortablePostComponent({
                   document.getElementById(`media-upload-${index}`).click()
                 }
                 size="sm"
-                variant="outline"
                 disabled={post.mediaId !== null}
               >
                 Add Media

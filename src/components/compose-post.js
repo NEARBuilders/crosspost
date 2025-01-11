@@ -258,7 +258,6 @@ export function ComposePost({ onSubmit }) {
                 <Button
                   onClick={handleMediaInputClick}
                   size="sm"
-                  variant="outline"
                   disabled={posts[0].mediaId !== null}
                 >
                   Add Media
