@@ -9,19 +9,19 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 
 export function TwitterApiNotice({ post }) {
-  const NOTICE_SHOWN_KEY = 'twitter_api_notice_shown';
+  const NOTICE_SHOWN_KEY = "twitter_api_notice_shown";
   const [open, setOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
   const { isConnected } = useTwitterConnection();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
-    const hasShown = localStorage.getItem(NOTICE_SHOWN_KEY) === 'true';
+
+    const hasShown = localStorage.getItem(NOTICE_SHOWN_KEY) === "true";
     if (isConnected && !hasShown) {
       const timer = setTimeout(() => {
         setOpen(true);
-        localStorage.setItem(NOTICE_SHOWN_KEY, 'true');
+        localStorage.setItem(NOTICE_SHOWN_KEY, "true");
       }, 800);
 
       return () => clearTimeout(timer);

@@ -56,17 +56,17 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
   const [type, setType] = useState("feature");
   const [text, setText] = useState("");
   const [posts, setPosts] = useState([
-    { text: "", mediaId: null, mediaPreview: null }
+    { text: "", mediaId: null, mediaPreview: null },
   ]);
 
   const { handleMediaUpload, removeMedia } = usePostMedia(
     setPosts,
     toast,
-    () => {} // no-op for saveAutoSave since we don't need it
+    () => {}, // no-op for saveAutoSave since we don't need it
   );
 
   const getPrefix = (type) => `${PREPEND_TEXT} #${type} `;
-  
+
   const handleTextChange = (value) => {
     setText(value);
   };
@@ -137,9 +137,9 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
           <div className="p-6">
             <DialogHeader className="mb-4">
               <VisuallyHidden.Root>
-              <DialogTitle className="font-mono text-2xl font-bold">
-                Request Feature
-              </DialogTitle>
+                <DialogTitle className="font-mono text-2xl font-bold">
+                  Request Feature
+                </DialogTitle>
               </VisuallyHidden.Root>
               <DialogDescription className="text-gray-600">
                 Submit a feature request or report a bug
@@ -159,7 +159,8 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
 
               <div className="space-y-2">
                 <div className="text-sm text-gray-500">
-                  Will be posted as: <span className="font-mono">{getPrefix(type)}</span>
+                  Will be posted as:{" "}
+                  <span className="font-mono">{getPrefix(type)}</span>
                 </div>
                 <Textarea
                   value={text}
@@ -210,7 +211,9 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
               <div className="flex justify-between items-center">
                 <span
                   className={`text-sm ${
-                    getRemainingChars() < 0 ? "text-destructive" : "text-gray-500"
+                    getRemainingChars() < 0
+                      ? "text-destructive"
+                      : "text-gray-500"
                   }`}
                 >
                   {getRemainingChars()} characters remaining

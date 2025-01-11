@@ -6,7 +6,7 @@ import {
   tweet,
 } from "../lib/twitter";
 
-const STORAGE_KEY = 'twitter_connection';
+const STORAGE_KEY = "twitter_connection";
 
 const store = (set, get) => ({
   isConnected: false,
@@ -47,7 +47,7 @@ const store = (set, get) => ({
           set({ isConnected, handle, isConnecting: false, error: null });
         }
       } catch (e) {
-        console.error('Failed to restore Twitter connection state:', e);
+        console.error("Failed to restore Twitter connection state:", e);
       }
     }
     // clean url
@@ -58,13 +58,16 @@ const store = (set, get) => ({
       const { isConnected, handle } = await status();
       // Update localStorage with verified state
       if (isConnected && handle) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ isConnected, handle }));
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ isConnected, handle }),
+        );
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
       set({ isConnected, handle });
     } catch (error) {
-      console.error('Failed to check Twitter connection:', error);
+      console.error("Failed to check Twitter connection:", error);
       localStorage.removeItem(STORAGE_KEY);
       set({ isConnected: false, handle: null });
     }

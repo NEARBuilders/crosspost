@@ -184,9 +184,7 @@ export function ComposePost({ onSubmit }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center mb-2">
-        <div>
-          {isConnected && <RequestFeatureButton post={onSubmit} />}
-        </div>
+        <div>{isConnected && <RequestFeatureButton post={onSubmit} />}</div>
         <div className="flex gap-2">
           <Button onClick={handleModalOpen} size="sm">
             Drafts
