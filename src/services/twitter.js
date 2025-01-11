@@ -126,12 +126,10 @@ export class TwitterService {
   }
 
   async getUserInfo(accessToken) {
-    if (!this.oauth1Client) {
-      throw new Error("OAuth 1.0a credentials are required for user operations");
-    }
-
     try {
-      const me = await this.oauth1Client.v2.me();
+      // Create OAuth 2.0 client with user access token for user operations
+      const userClient = new TwitterApi(accessToken);
+      const me = await userClient.v2.me();
       return me.data;
     } catch (error) {
       console.error("Failed to fetch user info:", error);
