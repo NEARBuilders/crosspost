@@ -226,7 +226,7 @@ export function ComposePost({ onSubmit }) {
             className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
           />
           <div>
-            <div className="mt-2 flex justify-end">
+            <div className="mt-2 flex justify-start">
               <input
                 type="file"
                 accept="image/*,video/*"
