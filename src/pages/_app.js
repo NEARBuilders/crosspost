@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { WindowContainer } from "@/components/window-container";
 import { SOCIAL_CONTRACT } from "@/lib/near-social";
 import posthog from "posthog-js";
+import { trackWalletConnection } from "@/lib/analytics";
 import { NETWORK_ID } from "../config";
 import { NearContext, Wallet } from "../wallets/near";
 
@@ -18,16 +19,29 @@ const wallet = new Wallet({
   createAccessKeyFor: SOCIAL_CONTRACT[NETWORK_ID],
 });
 
-posthog.init("phc_HZ4woEIkjMhk0U1iQMXSS4cDePyOvr6B80O8GGqoKkz", {
-  api_host: "https://us.i.posthog.com",
-  person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
-});
+// Initialize PostHog only in production
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+    loaded: (posthog) => {
+      if (process.env.NODE_ENV === 'development') posthog.opt_out_capturing();
+    },
+    capture_pageview: true,
+    capture_pageleave: true,
+    person_profiles: "identified_only",
+  });
+}
 
 export default function App({ Component, pageProps }) {
   const [signedAccountId, setSignedAccountId] = useState("");
   useEffect(() => {
     // Start up NEAR wallet
-    wallet.startUp(setSignedAccountId);
+    wallet.startUp((accountId) => {
+      setSignedAccountId(accountId);
+      if (accountId) {
+        trackWalletConnection(accountId);
+      }
+    });
   }, []);
 
   return (

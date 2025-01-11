@@ -3,6 +3,7 @@ import { NEAR_SOCIAL_ENABLED, TWITTER_ENABLED } from "@/config";
 import { tweet } from "@/lib/twitter";
 import { useNearSocialPost } from "@/store/near-social-store";
 import { useContext } from "react";
+import { trackPost } from "@/lib/analytics";
 import { ComposePost } from "../components/compose-post";
 import { NearContext } from "../wallets/near";
 import { toast } from "@/hooks/use-toast";
@@ -27,6 +28,8 @@ export default function Home() {
       }
 
       await Promise.all(promises); // execute all postings
+      // Track successful post
+      trackPost(signedAccountId, posts.length);
       toast({
         title: "Post Successful",
         description: "Your post has been published",
