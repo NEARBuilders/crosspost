@@ -64,8 +64,9 @@ function SortablePostComponent({
           value={post.text}
           onChange={(e) => onTextChange(index, e.target.value)}
           placeholder={`Thread part ${index + 1}`}
-          maxLength={280}
-          className="min-h-[150px] rounded-lg resize-none focus:ring-2 focus:ring-blue-500"
+          className={`min-h-[150px] rounded-lg resize-none focus:ring-2 focus:ring-blue-500 ${
+            post.text.length > 280 ? "border-destructive" : ""
+          }`}
         />
         <div className="flex flex-col gap-2 mt-2">
           <div className="flex justify-between items-center">
@@ -107,7 +108,7 @@ function SortablePostComponent({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">
+              <span className={`text-sm ${post.text.length > 280 ? "text-destructive" : "text-gray-500"}`}>
                 {post.text.length}/280 characters
               </span>
               <Button

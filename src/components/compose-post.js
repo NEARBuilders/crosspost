@@ -242,8 +242,9 @@ export function ComposePost({ onSubmit }) {
             value={posts[0].text}
             onChange={(e) => handleTextChange(0, e.target.value)}
             placeholder="What's happening?"
-            maxLength={280 * posts.length} // Allow for multiple tweets worth in single mode
-            className="min-h-[320px] rounded-lg focus:ring-2 focus:ring-blue-500"
+            className={`min-h-[320px] rounded-lg focus:ring-2 focus:ring-blue-500 ${
+              isConnected && posts[0].text.length > 280 ? "border-destructive" : ""
+            }`}
           />
           <div>
             <div className="mt-2 flex justify-start">
@@ -286,7 +287,11 @@ export function ComposePost({ onSubmit }) {
       )}
 
       <div className="flex justify-between items-center gap-2">
-        <span className="text-sm text-gray-500">
+        <span className={`text-sm ${
+          isConnected && !isThreadMode && posts[0].text.length > 280
+            ? "text-destructive"
+            : "text-gray-500"
+        }`}>
           {isThreadMode
             ? `${posts.length} parts`
             : `${posts[0].text.length} characters`}
@@ -294,13 +299,18 @@ export function ComposePost({ onSubmit }) {
         <div className="flex gap-2">
           <Button
             onClick={handleSaveDraft}
-            disabled={posts.every((p) => !p.text.trim())}
+            disabled={
+              posts.every((p) => !p.text.trim())
+            }
           >
             Save Draft
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={posts.every((p) => !p.text.trim())}
+            disabled={
+              posts.every((p) => !p.text.trim()) ||
+              (isThreadMode && posts.some((p) => p.text.length > 280))
+            }
           >
             Post
           </Button>
