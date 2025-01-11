@@ -26,38 +26,32 @@ export default function Analytics() {
       <Head>
         <title>analytics | crosspost</title>
       </Head>
-        <main className="p-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {/* Unique Visitors Card */}
-            <div className="base-component p-4">
-              <dt className="text-sm text-gray-500 dark:text-gray-400">
-                Unique Visitors
-              </dt>
-              <dd className="mt-2 text-2xl">
-                {stats.visitors}
-              </dd>
-            </div>
-
-            {/* Total Posts Card */}
-            <div className="base-component p-4">
-              <dt className="text-sm text-gray-500 dark:text-gray-400">
-                Total Posts
-              </dt>
-              <dd className="mt-2 text-2xl">
-                {stats.posts}
-              </dd>
-            </div>
-            {/* Connected Wallets Card */}
-            <div className="base-component p-4">
-              <dt className="text-sm text-gray-500 dark:text-gray-400">
-                Connected Wallets
-              </dt>
-              <dd className="mt-2 text-2xl">
-                {stats.wallets}
-              </dd>
-            </div>
+      <main className="p-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {/* Unique Visitors Card */}
+          <div className="base-component p-4">
+            <dt className="text-sm text-gray-500 dark:text-gray-400">
+              Unique Visitors
+            </dt>
+            <dd className="mt-2 text-2xl">{stats.visitors}</dd>
           </div>
-        </main>
+
+          {/* Total Posts Card */}
+          <div className="base-component p-4">
+            <dt className="text-sm text-gray-500 dark:text-gray-400">
+              Total Posts
+            </dt>
+            <dd className="mt-2 text-2xl">{stats.posts}</dd>
+          </div>
+          {/* Connected Wallets Card */}
+          <div className="base-component p-4">
+            <dt className="text-sm text-gray-500 dark:text-gray-400">
+              Connected Wallets
+            </dt>
+            <dd className="mt-2 text-2xl">{stats.wallets}</dd>
+          </div>
+        </div>
+      </main>
     </>
   );
 }

@@ -20,11 +20,12 @@ const wallet = new Wallet({
 });
 
 // Initialize PostHog only in production
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+if (typeof window !== "undefined" && process.env.NODE_ENV === "production") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+    api_host:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
     loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.opt_out_capturing();
+      if (process.env.NODE_ENV === "development") posthog.opt_out_capturing();
     },
     capture_pageview: true,
     capture_pageleave: true,

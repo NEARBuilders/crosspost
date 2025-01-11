@@ -36,7 +36,7 @@ export const getAnalytics = async () => {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_POSTHOG_KEY}`,
         },
-      }
+      },
     );
     const data = await response.json();
 
@@ -48,7 +48,7 @@ export const getAnalytics = async () => {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_POSTHOG_KEY}`,
           },
-        }
+        },
       ),
       fetch(
         `https://us.i.posthog.com/api/projects/${process.env.NEXT_PUBLIC_POSTHOG_PROJECT_ID}/events/?event=wallet_connect`,
@@ -56,7 +56,7 @@ export const getAnalytics = async () => {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_POSTHOG_KEY}`,
           },
-        }
+        },
       ),
     ]);
 
@@ -72,7 +72,9 @@ export const getAnalytics = async () => {
 
     // Get unique wallet IDs
     const uniqueWallets = new Set(
-      walletsData.results.map(event => event.properties?.signedAccountId).filter(Boolean)
+      walletsData.results
+        .map((event) => event.properties?.signedAccountId)
+        .filter(Boolean),
     ).size;
 
     return {
