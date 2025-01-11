@@ -15,9 +15,9 @@ export function Footer() {
           </a>
         </Button>
         <Button disabled>buy $XPOST</Button>
-        <Button asChild>
+        {/* <Button asChild>
           <a href="/analytics">analytics 📊</a>
-        </Button>
+        </Button> */}
       </div>
       <div className="flex flex-wrap items-center justify-end gap-1 sm:gap-2">
         <div className="flex items-center gap-1 sm:gap-2">
