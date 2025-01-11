@@ -134,7 +134,7 @@ export function FeatureRequestModal({ isOpen, onOpenChange, onSubmit }) {
           className="relative w-full max-w-2xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]"
         >
           <ModalWindowControls onClose={() => onOpenChange(false)} />
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             <DialogHeader className="mb-4">
               <VisuallyHidden.Root>
                 <DialogTitle className="font-mono text-2xl font-bold">
