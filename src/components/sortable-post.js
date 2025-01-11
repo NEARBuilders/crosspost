@@ -2,6 +2,7 @@ import { memo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 function SortablePostComponent({
   post,
@@ -36,7 +37,7 @@ function SortablePostComponent({
         <div
           {...attributes}
           {...listeners}
-          className="sticky top-0 h-[150px] w-8 flex items-center justify-center cursor-grab bg-gray-50 rounded-lg border-2 border-gray-800 shadow-[2px_2px_0_rgba(0,0,0,1)]"
+          className="sticky top-0 h-[150px] w-8 flex items-center justify-center cursor-grab bg-gray-50 rounded-lg base-component"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -59,12 +60,12 @@ function SortablePostComponent({
         </div>
       </div>
       <div className="flex-1">
-        <textarea
+        <Textarea
           value={post.text}
           onChange={(e) => onTextChange(index, e.target.value)}
           placeholder={`Thread part ${index + 1}`}
           maxLength={280}
-          className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
+          className="min-h-[150px] rounded-lg resize-none focus:ring-2 focus:ring-blue-500"
         />
         <div className="flex flex-col gap-2 mt-2">
           <div className="flex justify-between items-center">

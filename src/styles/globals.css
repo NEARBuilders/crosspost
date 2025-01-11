@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .base-component {
+    @apply border-2 border-gray-800 bg-white shadow-custom;
+  }
+  
+  .base-component-hover {
+    @apply hover:bg-gray-100;
+  }
+
+  .base-component-ghost {
+    @apply border-0 shadow-none hover:bg-accent hover:text-accent-foreground;
+  }
+}
+
 .blob {
   position: fixed;
   width: 500px;

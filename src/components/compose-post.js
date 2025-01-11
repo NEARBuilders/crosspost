@@ -19,6 +19,7 @@ import { useDraftsStore } from "../store/drafts-store";
 import { DraftsModal } from "./drafts-modal";
 import { SortablePost } from "./sortable-post";
 import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 import {
   Tooltip,
   TooltipContent,
@@ -229,12 +230,12 @@ export function ComposePost({ onSubmit }) {
         </div>
       ) : (
         <div className="sm:px-4 -mx-4 sm:mx-0">
-          <textarea
+          <Textarea
             value={posts[0].text}
             onChange={(e) => handleTextChange(0, e.target.value)}
             placeholder="What's happening?"
             maxLength={280 * posts.length} // Allow for multiple tweets worth in single mode
-            className="w-full min-h-[150px] px-4 py-4 border-2 border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-[2px_2px_0_rgba(0,0,0,1)]"
+            className="min-h-[320px] rounded-lg focus:ring-2 focus:ring-blue-500"
           />
           <div>
             <div className="mt-2 flex justify-start">
