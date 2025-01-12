@@ -17,8 +17,8 @@ export async function connectTwitter() {
   const response = await fetch("/api/twitter/auth", {
     method: "POST",
     headers: {
-      "Accept": "application/json"
-    }
+      Accept: "application/json",
+    },
   });
 
   const data = await response.json();
@@ -33,8 +33,8 @@ export async function disconnectTwitter() {
   await fetch("/api/twitter/auth", {
     method: "DELETE",
     headers: {
-      "Accept": "application/json"
-    }
+      Accept: "application/json",
+    },
   });
 }
 
@@ -42,8 +42,8 @@ export async function status() {
   const response = await fetch("/api/twitter/status", {
     method: "GET",
     headers: {
-      "Accept": "application/json"
-    }
+      Accept: "application/json",
+    },
   });
 
   if (!response.ok) {
@@ -58,7 +58,7 @@ export async function tweet(posts) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json"
+      Accept: "application/json",
     },
     body: JSON.stringify({ posts }),
   });

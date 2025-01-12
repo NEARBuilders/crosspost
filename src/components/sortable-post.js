@@ -113,10 +113,7 @@ function SortablePostComponent({
               >
                 {post.text.length}/280 characters
               </span>
-              <Button
-                onClick={() => onTextChange(index, "")}
-                size="sm"
-              >
+              <Button onClick={() => onTextChange(index, "")} size="sm">
                 Clear
               </Button>
               {onRemove && (
