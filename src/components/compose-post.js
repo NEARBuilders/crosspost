@@ -260,7 +260,7 @@ export function ComposePost({ onSubmit }) {
             <div className="mt-2 flex justify-start">
               <input
                 type="file"
-                accept="image/*,video/*"
+                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4"
                 onChange={handleSingleMediaUpload}
                 className="hidden"
                 id="media-upload-single"

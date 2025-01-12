@@ -21,7 +21,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const form = formidable({});
+    const form = formidable({
+      maxFileSize: 15 * 1024 * 1024, // Twitter's limit is 15MB
+    });
+    
     const [_, files] = await form.parse(req);
 
     if (!files.media?.[0]) {
@@ -29,6 +32,11 @@ export default async function handler(req, res) {
     }
 
     const file = files.media[0];
+    
+    // Basic mimetype validation
+    if (!file.mimetype?.match(/^(image\/.*|video\/.*)$/)) {
+      return res.status(400).json({ error: "Only images and videos are supported" });
+    }
     const twitterService = await TwitterService.initialize();
 
     if (!twitterService.oauth1Client) {
