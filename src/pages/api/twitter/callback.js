@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   try {
     const twitterService = await TwitterService.initialize();
-    
+
     // get tokens from callback parameters
     const tokens = await twitterService.handleCallback(
       validation.code,

@@ -78,21 +78,21 @@ export class TwitterService {
     }
 
     try {
-      const { accessToken, refreshToken: newRefreshToken } = 
+      const { accessToken, refreshToken: newRefreshToken } =
         await this.oauth2Client.refreshOAuth2Token(refreshToken);
       return { accessToken, refreshToken: newRefreshToken };
     } catch (error) {
       console.error("Failed to refresh token:", error);
-      
+
       // Handle specific Twitter API error for invalid token
-      if (error.data?.error === 'invalid_request') {
+      if (error.data?.error === "invalid_request") {
         throw new Error(
-          `Twitter session expired: ${error.data.error_description} Please disconnect and reconnect your Twitter account.`
+          `Twitter session expired: ${error.data.error_description} Please disconnect and reconnect your Twitter account.`,
         );
       }
-      
+
       throw new Error(
-        `Failed to refresh Twitter access: ${error.data?.error_description || error.message}. Please try disconnecting and reconnecting your account.`
+        `Failed to refresh Twitter access: ${error.data?.error_description || error.message}. Please try disconnecting and reconnecting your account.`,
       );
     }
   }
@@ -161,7 +161,9 @@ export class TwitterService {
           tweetData.media = { media_ids: [post.mediaId] };
         }
 
-        const response = await handleApiCall(() => userClient.v2.tweet(tweetData));
+        const response = await handleApiCall(() =>
+          userClient.v2.tweet(tweetData),
+        );
         return { ...response, tokens };
       } else {
         // Thread implementation
@@ -177,7 +179,9 @@ export class TwitterService {
             ...(post.mediaId && { media: { media_ids: [post.mediaId] } }),
           };
 
-          const response = await handleApiCall(() => userClient.v2.tweet(tweetData));
+          const response = await handleApiCall(() =>
+            userClient.v2.tweet(tweetData),
+          );
           responses.push(response);
           lastTweetId = response.data.id;
         }
@@ -192,12 +196,10 @@ export class TwitterService {
       }
       // For Twitter API errors, include the error description if available
       if (error.data?.error_description) {
-        throw new Error(
-          `Twitter API Error: ${error.data.error_description}`
-        );
+        throw new Error(`Twitter API Error: ${error.data.error_description}`);
       }
       throw new Error(
-        error.message || "Failed to post tweet. Please try again."
+        error.message || "Failed to post tweet. Please try again.",
       );
     }
   }
