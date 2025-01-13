@@ -64,7 +64,9 @@ export async function tweet(posts) {
   });
 
   if (!response.ok) {
-    const error = new Error("Failed to send post");
+    // Parse the error response to get the detailed message
+    const errorData = await response.json();
+    const error = new Error(errorData.error || "Failed to send post");
     error.status = response.status;
     throw error;
   }

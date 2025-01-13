@@ -59,7 +59,7 @@ export class TwitterService {
     // Use OAuth 2.0 with PKCE for more granular scope control
     const { url, codeVerifier, state } =
       this.oauth2Client.generateOAuth2AuthLink(callbackUrl, {
-        scope: ["tweet.read", "tweet.write", "users.read"],
+        scope: ["tweet.read", "tweet.write", "users.read", "offline.access"],
       });
     return { url, codeVerifier, state };
   }
@@ -70,6 +70,31 @@ export class TwitterService {
       codeVerifier,
       redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/twitter/callback`,
     });
+  }
+
+  async refreshToken(refreshToken) {
+    if (!refreshToken) {
+      throw new Error("Refresh token is required");
+    }
+
+    try {
+      const { accessToken, refreshToken: newRefreshToken } = 
+        await this.oauth2Client.refreshOAuth2Token(refreshToken);
+      return { accessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      
+      // Handle specific Twitter API error for invalid token
+      if (error.data?.error === 'invalid_request') {
+        throw new Error(
+          `Twitter session expired: ${error.data.error_description} Please disconnect and reconnect your Twitter account.`
+        );
+      }
+      
+      throw new Error(
+        `Failed to refresh Twitter access: ${error.data?.error_description || error.message}. Please try disconnecting and reconnecting your account.`
+      );
+    }
   }
 
   async uploadMedia(mediaPath, mimeType) {
@@ -94,7 +119,7 @@ export class TwitterService {
     }
   }
 
-  async tweet(accessToken, posts) {
+  async tweet(accessToken, refreshToken, posts) {
     // If no access token is provided, user is not connected
     if (!accessToken) {
       throw new Error(
@@ -108,8 +133,24 @@ export class TwitterService {
     }
 
     try {
-      // Create OAuth 2.0 client with user access token for tweet operations
-      const userClient = new TwitterApi(accessToken);
+      let userClient = new TwitterApi(accessToken);
+      let tokens = { accessToken, refreshToken };
+
+      const handleApiCall = async (apiCall) => {
+        try {
+          return await apiCall();
+        } catch (error) {
+          // Check if error is due to invalid token
+          if (error.code === 401 && refreshToken) {
+            // Attempt to refresh the token
+            tokens = await this.refreshToken(refreshToken);
+            userClient = new TwitterApi(tokens.accessToken);
+            // Retry the API call with new token
+            return await apiCall();
+          }
+          throw error;
+        }
+      };
 
       if (posts.length === 1) {
         const post = posts[0];
@@ -120,7 +161,8 @@ export class TwitterService {
           tweetData.media = { media_ids: [post.mediaId] };
         }
 
-        return userClient.v2.tweet(tweetData);
+        const response = await handleApiCall(() => userClient.v2.tweet(tweetData));
+        return { ...response, tokens };
       } else {
         // Thread implementation
         let lastTweetId = null;
@@ -135,22 +177,32 @@ export class TwitterService {
             ...(post.mediaId && { media: { media_ids: [post.mediaId] } }),
           };
 
-          const response = await userClient.v2.tweet(tweetData);
+          const response = await handleApiCall(() => userClient.v2.tweet(tweetData));
           responses.push(response);
           lastTweetId = response.data.id;
         }
 
-        return responses;
+        return { responses, tokens };
       }
     } catch (error) {
       console.error("Failed to post tweet:", error);
+      // Preserve the detailed error message for token refresh failures
+      if (error.message.includes("Your Twitter connection has expired")) {
+        throw error;
+      }
+      // For Twitter API errors, include the error description if available
+      if (error.data?.error_description) {
+        throw new Error(
+          `Twitter API Error: ${error.data.error_description}`
+        );
+      }
       throw new Error(
-        "Failed to post tweet: " + (error.message || "Please try again"),
+        error.message || "Failed to post tweet. Please try again."
       );
     }
   }
 
-  async getUserInfo(accessToken) {
+  async getUserInfo(accessToken, refreshToken) {
     if (!this.oauth1Client) {
       throw new Error(
         "OAuth 1.0a credentials are required for user operations",
@@ -158,14 +210,25 @@ export class TwitterService {
     }
 
     try {
-      // Create OAuth 2.0 client with user access token for user operations
-      const userClient = new TwitterApi(accessToken);
-      const me = await userClient.v2.me();
-      return me.data;
+      let userClient = new TwitterApi(accessToken);
+      let tokens = { accessToken, refreshToken };
+
+      try {
+        const me = await userClient.v2.me();
+        return { ...me.data, tokens };
+      } catch (error) {
+        if (error.code === 401 && refreshToken) {
+          // Attempt to refresh the token
+          tokens = await this.refreshToken(refreshToken);
+          userClient = new TwitterApi(tokens.accessToken);
+          // Retry with new token
+          const me = await userClient.v2.me();
+          return { ...me.data, tokens };
+        }
+        throw error;
+      }
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      // Return null instead of throwing error when token is invalid
-      // This indicates user is not connected
       return null;
     }
   }

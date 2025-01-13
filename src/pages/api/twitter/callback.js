@@ -1,63 +1,41 @@
 import { TwitterService } from "../../../services/twitter";
-import { parse } from "cookie";
+import { validateOAuthCallback, setAuthCookies } from "./utils";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { code, state, error, error_description } = req.query;
-  const cookies = parse(req.headers.cookie || "");
-  const { code_verifier, oauth_state } = cookies;
-
-  // Handle OAuth errors (e.g., user denied access)
-  if (error) {
-    console.log("OAuth error:", error, error_description);
+  // Validate OAuth callback parameters
+  const validation = validateOAuthCallback(req);
+  if (!validation.isValid) {
     return res.redirect(
-      `/?twitter_error=${"Twitter access was denied: " + encodeURIComponent(error)}`,
-    );
-  }
-
-  // Validate OAuth parameters
-  if (!code || !state) {
-    return res.redirect(
-      `/?twitter_error=${encodeURIComponent("Missing authorization code")}`,
-    );
-  }
-
-  if (!code_verifier || !oauth_state) {
-    return res.redirect(
-      `/?twitter_error=${encodeURIComponent("Invalid session state")}`,
-    );
-  }
-
-  // Verify the state parameter to prevent CSRF attacks
-  if (state !== oauth_state) {
-    return res.redirect(
-      `/?twitter_error=${encodeURIComponent("Invalid OAuth state")}`,
+      `/?twitter_error=${encodeURIComponent(validation.error)}`,
     );
   }
 
   try {
     const twitterService = await TwitterService.initialize();
-    const { accessToken, refreshToken } = await twitterService.handleCallback(
-      code,
-      code_verifier,
-      state,
+    
+    // get tokens from callback parameters
+    const tokens = await twitterService.handleCallback(
+      validation.code,
+      validation.code_verifier,
+      validation.state,
     );
 
-    // Get user info using the new access token
-    const userInfo = await twitterService.getUserInfo(accessToken);
+    // get user info using the new access token
+    const userInfo = await twitterService.getUserInfo(tokens.accessToken);
+    if (!userInfo) {
+      return res.redirect(
+        `/?twitter_error=${encodeURIComponent("Failed to fetch user info")}`,
+      );
+    }
 
-    // Store tokens in HttpOnly cookies
-    res.setHeader("Set-Cookie", [
-      `twitter_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax`,
-      `twitter_refresh_token=${refreshToken}; Path=/; HttpOnly; SameSite=Lax`,
-      "code_verifier=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
-      "oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
-    ]);
+    // store tokens in HttpOnly cookies
+    setAuthCookies(res, tokens);
 
-    // Redirect with user info
+    // redirect with user info
     res.redirect(`/?twitter_connected=true&handle=${userInfo.username}`);
   } catch (error) {
     console.error("Twitter callback error:", error);

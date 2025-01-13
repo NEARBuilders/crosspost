@@ -1,18 +1,10 @@
-import { TwitterService } from "../../../services/twitter";
+import { TwitterService } from "@/services/twitter";
+import { clearTwitterCookies } from "./utils";
 
 export default async function handler(req, res) {
   if (req.method === "DELETE") {
-    res.setHeader("Set-Cookie", [
-      "twitter_access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; SameSite=Lax",
-      "twitter_refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; SameSite=Lax",
-      "code_verifier=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; SameSite=Lax",
-      "oauth_state=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; SameSite=Lax",
-    ]);
+    clearTwitterCookies(res);
     return res.status(200).json({ message: "Logged out successfully" });
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
   }
 
   if (!process.env.TWITTER_CLIENT_ID || !process.env.TWITTER_CLIENT_SECRET) {
@@ -34,7 +26,7 @@ export default async function handler(req, res) {
     res.status(200).json({ authUrl: authData.url });
   } catch (error) {
     console.error("Twitter auth error:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Failed to initialize Twitter authentication" });
   }
