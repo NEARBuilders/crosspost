@@ -73,7 +73,7 @@ function SortablePostComponent({
             <div className="flex flex-row gap-2">
               <input
                 type="file"
-                accept="image/*,video/*"
+                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4"
                 onChange={(e) => onMediaUpload(index, e.target.files[0])}
                 className="hidden"
                 id={`media-upload-${index}`}
@@ -113,11 +113,7 @@ function SortablePostComponent({
               >
                 {post.text.length}/280 characters
               </span>
-              <Button
-                onClick={() => onTextChange(index, "")}
-                // variant="destructive"
-                size="sm"
-              >
+              <Button onClick={() => onTextChange(index, "")} size="sm">
                 Clear
               </Button>
               {onRemove && (

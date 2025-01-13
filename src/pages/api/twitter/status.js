@@ -1,25 +1,31 @@
-import { parse } from "cookie";
-import { TwitterService } from "../../../services/twitter";
+import { withTwitterAuth } from "./utils";
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const cookies = parse(req.headers.cookie || "");
-  const accessToken = cookies.twitter_access_token;
-  const isConnected = !!accessToken;
-
-  if (!isConnected) {
-    return res.json({ isConnected, handle: null });
-  }
-
   try {
-    const twitterService = await TwitterService.initialize();
-    const userInfo = await twitterService.getUserInfo(accessToken);
-    res.json({ isConnected, handle: userInfo.username });
+    const result = await withTwitterAuth(
+      req,
+      res,
+      async ({ twitterService, accessToken, refreshToken }) => {
+        const userInfo = await twitterService.getUserInfo(
+          accessToken,
+          refreshToken,
+        );
+
+        if (!userInfo) {
+          return res.json({ isConnected: false, handle: null });
+        }
+
+        return res.json({
+          isConnected: true,
+          handle: userInfo.username,
+          tokens: userInfo.tokens,
+        });
+      },
+    );
+
+    return result;
   } catch (error) {
     console.error("Failed to fetch user info:", error);
-    res.json({ isConnected, handle: null });
+    return res.json({ isConnected: false, handle: null });
   }
 }
