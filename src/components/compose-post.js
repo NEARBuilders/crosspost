@@ -236,6 +236,7 @@ export function ComposePost({ onSubmit }) {
                   onMediaUpload={handleMediaUpload}
                   onMediaRemove={removeMedia}
                   onRemove={posts.length > 1 ? removeThread : undefined}
+                  isConnected={isConnected}
                 />
               ))}
             </SortableContext>
@@ -269,7 +270,7 @@ export function ComposePost({ onSubmit }) {
                 <Button
                   onClick={handleMediaInputClick}
                   size="sm"
-                  disabled={posts[0].mediaId !== null}
+                  disabled={posts[0].mediaId !== null || !isConnected}
                 >
                   Add Media
                 </Button>

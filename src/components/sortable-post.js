@@ -11,6 +11,7 @@ function SortablePostComponent({
   onRemove,
   onMediaUpload,
   onMediaRemove,
+  isConnected,
 }) {
   const {
     attributes,
@@ -83,7 +84,7 @@ function SortablePostComponent({
                   document.getElementById(`media-upload-${index}`).click()
                 }
                 size="sm"
-                disabled={post.mediaId !== null}
+                disabled={post.mediaId !== null || !isConnected}
               >
                 Add Media
               </Button>
