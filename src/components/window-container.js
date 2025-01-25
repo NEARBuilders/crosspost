@@ -7,7 +7,7 @@ import { ConnectToNearButton } from "./connect-to-near";
 import { ConnectToTwitterButton } from "./connect-to-twitter";
 import Link from "next/link";
 
-export const WindowControls = () => {
+export const WindowControls = ({ title = "crosspost", icon: Icon = PenSquare }) => {
   // const [isOpen, setIsOpen] = useState(false);
   // const router = useRouter();
   // const { accountId, signOut } = useNearSocialStore();
@@ -22,8 +22,8 @@ export const WindowControls = () => {
       <div className="flex flex-col items-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
         <Link href="/">
           <div className="flex items-center gap-2">
-            <PenSquare size={24} />
-            <h1 className="text-3xl font-bold">crosspost</h1>
+            <Icon size={24} />
+            <h1 className="text-3xl font-bold">{title}</h1>
           </div>
         </Link>
         <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -76,7 +76,7 @@ export const WindowControls = () => {
   );
 };
 
-export function WindowContainer({ children }) {
+export function WindowContainer({ children, layoutProps }) {
   return (
     <div className="min-h-screen p-2 sm:p-8 relative">
       <motion.div
@@ -85,7 +85,10 @@ export function WindowContainer({ children }) {
         transition={{ duration: 0.5 }}
         className="mx-1 sm:mx-auto min-h-[790px] max-w-4xl border-2 border-gray-800 bg-white shadow-[4px_4px_0_rgba(0,0,0,1)]"
       >
-        <WindowControls />
+        <WindowControls 
+          title={layoutProps?.title} 
+          icon={layoutProps?.icon}
+        />
         <div className="md:p-8 p-2">{children}</div>
       </motion.div>
     </div>

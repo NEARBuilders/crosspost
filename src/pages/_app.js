@@ -91,7 +91,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       <GithubForkRibbon />
       <NearContext.Provider value={{ wallet, signedAccountId }}>
-        <WindowContainer>
+        <WindowContainer layoutProps={Component.layoutProps}>
           <Component {...pageProps} />
         </WindowContainer>
       </NearContext.Provider>

@@ -204,6 +204,45 @@ export class TwitterService {
     }
   }
 
+  async getTweet(accessToken, refreshToken, tweetId) {
+    if (!accessToken) {
+      throw new Error("Authentication required: Please connect your Twitter account");
+    }
+
+    try {
+      let userClient = new TwitterApi(accessToken);
+      let tokens = { accessToken, refreshToken };
+
+      const handleApiCall = async () => {
+        try {
+          const tweet = await userClient.v2.singleTweet(tweetId, {
+            expansions: ['author_id', 'referenced_tweets.id', 'referenced_tweets.id.author_id'],
+            'tweet.fields': ['text', 'author_id', 'referenced_tweets'],
+            'user.fields': ['username']
+          });
+          return tweet;
+        } catch (error) {
+          if (error.code === 401 && refreshToken) {
+            tokens = await this.refreshToken(refreshToken);
+            userClient = new TwitterApi(tokens.accessToken);
+            return await userClient.v2.singleTweet(tweetId, {
+              expansions: ['author_id', 'referenced_tweets.id', 'referenced_tweets.id.author_id'],
+              'tweet.fields': ['text', 'author_id', 'referenced_tweets'],
+              'user.fields': ['username']
+            });
+          }
+          throw error;
+        }
+      };
+
+      const response = await handleApiCall();
+      return { ...response.data, tokens };
+    } catch (error) {
+      console.error("Failed to fetch tweet:", error);
+      throw new Error(error.message || "Failed to fetch tweet");
+    }
+  }
+
   async getUserInfo(accessToken, refreshToken) {
     if (!this.oauth1Client) {
       throw new Error(
