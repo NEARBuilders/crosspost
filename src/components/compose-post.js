@@ -13,6 +13,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useCallback, useEffect, useState } from "react";
+import { Input } from "./ui/input";
 import { usePostManagement } from "../hooks/use-post-management";
 import { usePostMedia } from "../hooks/use-post-media";
 import { useDraftsStore } from "../store/drafts-store";
@@ -43,8 +44,9 @@ export function ComposePost({ onSubmit }) {
   );
 
   const [posts, setPosts] = useState([
-    { text: "", mediaId: null, mediaPreview: null },
+    { text: "", mediaId: null, mediaPreview: null, repostLink: "" },
   ]);
+  const [showRepostInput, setShowRepostInput] = useState(false);
   const {
     setModalOpen,
     saveDraft,
@@ -158,6 +160,17 @@ export function ComposePost({ onSubmit }) {
     removeMedia(0);
   }, [removeMedia]);
 
+  const handleRepostLinkChange = useCallback((e) => {
+    setPosts((currentPosts) => [
+      { ...currentPosts[0], repostLink: e.target.value },
+      ...currentPosts.slice(1),
+    ]);
+  }, []);
+
+  const toggleRepostInput = useCallback(() => {
+    setShowRepostInput((prev) => !prev);
+  }, []);
+
   const handleSubmit = useCallback(async () => {
     const nonEmptyPosts = posts.filter((p) => p.text.trim());
     if (nonEmptyPosts.length === 0) {
@@ -170,7 +183,8 @@ export function ComposePost({ onSubmit }) {
     }
     try {
       await onSubmit(nonEmptyPosts);
-      setPosts([{ text: "", mediaId: null, mediaPreview: null }]);
+      setPosts([{ text: "", mediaId: null, mediaPreview: null, repostLink: "" }]);
+      setShowRepostInput(false);
       clearAutoSave();
     } catch (err) {
       console.error("Post error:", err);
@@ -237,6 +251,9 @@ export function ComposePost({ onSubmit }) {
                   onMediaRemove={removeMedia}
                   onRemove={posts.length > 1 ? removeThread : undefined}
                   isConnected={isConnected}
+                  showRepostInput={index === 0 && showRepostInput}
+                  toggleRepostInput={index === 0 ? toggleRepostInput : undefined}
+                  onRepostLinkChange={index === 0 ? handleRepostLinkChange : undefined}
                 />
               ))}
             </SortableContext>
@@ -270,9 +287,16 @@ export function ComposePost({ onSubmit }) {
                 <Button
                   onClick={handleMediaInputClick}
                   size="sm"
-                  disabled={posts[0].mediaId !== null || !isConnected}
+                  disabled={posts[0].mediaId !== null || !isConnected || posts[0].repostLink}
                 >
                   Add Media
+                </Button>
+                <Button
+                  onClick={toggleRepostInput}
+                  size="sm"
+                  disabled={!isConnected || posts[0].mediaId !== null}
+                >
+                  Quote Repost
                 </Button>
                 {posts[0].mediaPreview && (
                   <div className="relative">
@@ -292,6 +316,15 @@ export function ComposePost({ onSubmit }) {
                   </div>
                 )}
               </div>
+              {showRepostInput && (
+                <Input
+                  type="text"
+                  placeholder="Enter repost link"
+                  value={posts[0].repostLink}
+                  onChange={handleRepostLinkChange}
+                  className="ml-2"
+                />
+              )}
             </div>
           </div>
         </div>

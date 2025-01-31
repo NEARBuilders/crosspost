@@ -161,6 +161,11 @@ export class TwitterService {
           tweetData.media = { media_ids: [post.mediaId] };
         }
 
+        // Add quote_tweet_id if present
+        if (post.repostLink) {
+          tweetData.attachment_url = post.repostLink;
+        }
+
         const response = await handleApiCall(() =>
           userClient.v2.tweet(tweetData),
         );
@@ -177,6 +182,7 @@ export class TwitterService {
               reply: { in_reply_to_tweet_id: lastTweetId },
             }),
             ...(post.mediaId && { media: { media_ids: [post.mediaId] } }),
+            ...(post.repostLink && { attachment_url: post.repostLink }),
           };
 
           const response = await handleApiCall(() =>

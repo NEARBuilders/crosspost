@@ -3,6 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { Input } from "./ui/input";
 
 function SortablePostComponent({
   post,
@@ -12,6 +13,9 @@ function SortablePostComponent({
   onMediaUpload,
   onMediaRemove,
   isConnected,
+  showRepostInput,
+  toggleRepostInput,
+  onRepostLinkChange,
 }) {
   const {
     attributes,
@@ -84,10 +88,19 @@ function SortablePostComponent({
                   document.getElementById(`media-upload-${index}`).click()
                 }
                 size="sm"
-                disabled={post.mediaId !== null || !isConnected}
+                disabled={post.mediaId !== null || !isConnected || post.repostLink}
               >
                 Add Media
               </Button>
+              {index === 0 && (
+                <Button
+                  onClick={toggleRepostInput}
+                  size="sm"
+                  disabled={!isConnected || post.mediaId !== null}
+                >
+                  Quote Repost
+                </Button>
+              )}
               {post.mediaPreview && (
                 <>
                   <div className="relative">
@@ -128,6 +141,15 @@ function SortablePostComponent({
               )}
             </div>
           </div>
+          {index === 0 && showRepostInput && (
+            <Input
+              type="text"
+              placeholder="Enter repost link"
+              value={post.repostLink}
+              onChange={(e) => onRepostLinkChange(e)}
+              className="mt-2"
+            />
+          )}
         </div>
       </div>
     </div>

@@ -62,7 +62,8 @@
     "react-markdown": "^9.0.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "twitter-api-v2": "^1.19.0"
+    "twitter-api-v2": "^1.19.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@builddao/near-social-js": "1.1.0-beta.6",
