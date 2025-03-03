@@ -41,11 +41,11 @@ export function usePostMedia(setPosts, setError, saveAutoSave) {
 
         // Check file size
         const isVideo = file.type === "video/mp4";
-        const maxSize = isVideo ? 15 * 1024 * 1024 : 5 * 1024 * 1024; // 15MB for video, 5MB for images
+        const maxSize = isVideo ? 512 * 1024 * 1024 : 5 * 1024 * 1024; // 512MB for video, 5MB for images
 
         if (file.size > maxSize) {
           throw new Error(
-            `File size exceeds the ${isVideo ? "15MB" : "5MB"} limit`,
+            `File size exceeds the ${isVideo ? "512MB" : "5MB"} limit`,
           );
         }
 
