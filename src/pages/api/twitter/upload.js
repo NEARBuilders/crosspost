@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
   try {
     const form = formidable({
-      maxFileSize: 15 * 1024 * 1024, // Twitter's limit is 15MB
+      maxFileSize: 512 * 1024 * 1024, // Twitter's limit is 512MB
     });
 
     const [_, files] = await form.parse(req);
