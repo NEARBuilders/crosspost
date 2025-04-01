@@ -52,8 +52,5 @@ package-lock.json
 pnpm-lock.yaml
 # bun.lockb
 
-# cuz this is a template, but feel free to push in own fork
-bos.config.json
-
 .clinerules
 memory-bank
