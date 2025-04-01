@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Thing",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the thing"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the thing"
+    },
+    "image": {
+      "type": "string",
+      "description": "URL to the image"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Custom properties of the thing"
+    }
+  },
+  "required": ["name"]
+}

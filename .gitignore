@@ -16,6 +16,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -31,6 +32,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+.turbo
+
+# mf
+.__mf__temp
 
 # typescript
 *.tsbuildinfo
@@ -46,3 +51,9 @@ yarn.lock
 package-lock.json
 pnpm-lock.yaml
 # bun.lockb
+
+# cuz this is a template, but feel free to push in own fork
+bos.config.json
+
+.clinerules
+memory-bank
